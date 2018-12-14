@@ -3,8 +3,8 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
-from flaskr.auth import login_required
-from flaskr.db import get_db
+from TTTS.user import login_required
+from TTTS.db import get_db
 
 bp = Blueprint('mall', __name__)
 
