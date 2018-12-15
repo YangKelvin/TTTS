@@ -111,6 +111,7 @@ def login():
     return render_template('user/login.html')
 
 # 待修改
+@bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
 

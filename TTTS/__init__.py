@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, render_template
 
 
 def create_app(test_config=None):
@@ -25,9 +25,9 @@ def create_app(test_config=None):
         pass
 
     # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
+
+    def index():
+        return render_template('base.html')
 
     from . import db
     db.init_app(app)
@@ -37,6 +37,6 @@ def create_app(test_config=None):
 
     from . import mall
     app.register_blueprint(mall.bp)
-    app.add_url_rule('/', endpoint='index')
+    app.add_url_rule('/', endpoint='index', view_func=index)
 
     return app
