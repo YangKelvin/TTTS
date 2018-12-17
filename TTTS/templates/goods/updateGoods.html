@@ -6,18 +6,18 @@
 
 <form method="post">
     <label for="goodsName">茶種</label>
-    <input name="goodsName" id="goodsName" required>
+    <input name="goodsName" id="goodsName" value="{{ request.form['goodsName'] or post['goodsName'] }}" required>
     <label for="goodsType">茶種</label>
-    <input name="goodsType" id="goodsType" required>
+    <input name="goodsType" id="goodsType" value="{{ request.form['goodsType'] or post['goodsType'] }}" required>
     <label for="price">價格</label>
-    <input name="price" id="price" required>
+    <input name="price" id="price" value="{{ request.form['price'] or post['price'] }}" required>
     <label for="stockQuantity">數量</label>
-    <input name="stockQuantity" id="stockQuantity" required>
+    <input name="stockQuantity" id="stockQuantity" value="{{ request.form['stockQuantity'] or post['stockQuantity'] }}" required>
     <label for="introduction">介紹</label>
-    <input name="introduction" id="introduction" required>
+    <input name="introduction" id="introduction" value="{{ request.form['introduction'] or post['introduction'] }}" required>
     <label for="imageName">圖片</label>
     <input type="file" name="imageName" id="imageName" accept="image/*" required>
     <label for="countryOfOrigin">產地</label>
-    <input name="countryOfOrigin" id="countryOfOrigin" required>
-    <input type="submit" value="Add">
+    <input name="countryOfOrigin" id="countryOfOrigin" value="{{ request.form['countryOfOrigin'] or post['countryOfOrigin'] }}" required>
+    <input type="submit" value="Update">
 </form>

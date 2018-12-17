@@ -32,7 +32,7 @@ def init():
 def index():
     db = get_db()
     posts = db.execute(
-        'SELECT GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin'
+        'SELECT GoodsID, GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin'
         ' FROM GOODS'
         ' ORDER BY GoodsID DESC'
     ).fetchall()
@@ -81,14 +81,11 @@ def get_goods(id, check_author=True):
     if post is None:
         abort(404, "Post id {0} doesn't exist.".format(id))
 
-    if check_author and post['author_id'] != g.user['id']:
-        abort(403)
-
     return post
 
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 # @login_required
-def update(id):
+def updateGoods(id):
     post = get_goods(id)
 
     if request.method == 'POST':
@@ -110,8 +107,8 @@ def update(id):
         else:
             db = get_db()
             db.execute(
-                'UPDATE GOODS SET GoodsName = ?, GoodsType = ?, Price = ?, StockQuantity = ?, Intorduction = ?, ImageName = ?, CountryOfOrigin = ?'
-                ' WHERE id = ?',
+                'UPDATE GOODS SET GoodsName = ?, GoodsType = ?, Price = ?, StockQuantity = ?, Introduction = ?, ImageName = ?, CountryOfOrigin = ?'
+                ' WHERE GoodsID = ?',
                 (goodsName, goodsType, price, stockQuantity, introduction, imageName, countryOfOrigin, id)
             )
             db.commit()

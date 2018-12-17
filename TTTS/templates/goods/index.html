@@ -23,6 +23,9 @@
                     <h1>{{ post['GoodsName'] }}</h1>
                 </div>
             </header>
+            {% if g.user['PermissionID'] == 2%}
+                <a class="action" href="{{ url_for('goods.updateGoods', id=post['GoodsID']) }}">Edit</a>
+            {% endif %}
             {% if g.user['PermissionID'] == 3%}
                 <a class="action" href="{{ url_for('goods.addNewGoods', id=post['id']) }}">Buy</a>
             {% endif %}
