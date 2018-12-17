@@ -35,8 +35,8 @@ def create_app(test_config=None):
     from . import user
     app.register_blueprint(user.bp)
 
-    from . import mall
-    app.register_blueprint(mall.bp)
+    from . import goods
+    app.register_blueprint(goods.bp)
     app.add_url_rule('/', endpoint='index', view_func=index)
 
     return app
