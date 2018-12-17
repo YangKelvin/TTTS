@@ -26,7 +26,7 @@ def init():
         ('好好喝烏龍茶', '烏龍茶', '100', '5', '好喝的綠茶喔', 'goodGreenTea.png', '1')
     )
     db.commit()
-    return redirect(url_for('goods.addNewGoods'))
+    return redirect(url_for('index'))
 
 @bp.route('/')
 def index():

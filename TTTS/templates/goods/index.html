@@ -1,30 +1,35 @@
 {% block header %}
-  <h1>{% block title %}商品s{% endblock %}</h1>
-  {% if g.user %}
-    <a></a>
-    <a class="action" href="{{ url_for('goods.addNewGoods') }}">New</a>
-    <li><a href="{{ url_for('user.logout') }}">Log Out</a>
-  {% endif %}
+    <h1>{% block title %}商品s{% endblock %}</h1>
+    {% if not g.user %}
+        <a></a>
+        <a class="action" href="{{ url_for('user.register') }}">Register</a>
+        <a href="{{ url_for('user.login') }}">Login</a>
+    {% endif %}
+
+    {% if g.user %}
+        <p>歡迎{{g.user['UserName']}} PermissionID: {{g.user['PermissionID']}}</p>
+        {% if g.user['PermissionID'] == 2%}
+            <a class="action" href="{{ url_for('goods.addNewGoods') }}">New</a>
+        {% endif %}
+        <a href="{{ url_for('user.logout') }}">Log Out</a>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
-    {% if g.user %}
-        <p>歡迎{{g.user['UserName']}}</h1>
-    {% endif %}
-  {% for post in posts %}
-    <article class="post">
-      <header>
-        <div>
-          <h1>{{ post['GoodsName'] }}</h1>
-        </div>
-      </header>
-      {% if g.user['PerminstionID'] == 3 %}
-          <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Buy</a>
+    {% for post in posts %}
+        <article class="post">
+            <header>
+                <div>
+                    <h1>{{ post['GoodsName'] }}</h1>
+                </div>
+            </header>
+            {% if g.user['PermissionID'] == 3%}
+                <a class="action" href="{{ url_for('goods.addNewGoods', id=post['id']) }}">Buy</a>
+            {% endif %}
+            <div class="about">{{ post['Introduction'] }} price: {{ post['Price']}}元</div>
+        </article>
+        {% if not loop.last %}
+            <hr>
         {% endif %}
-      <div class="about">{{ post['Introduction'] }} price: {{ post['Price']}}元</div>
-    </article>
-    {% if not loop.last %}
-      <hr>
-    {% endif %}
-  {% endfor %}
+    {% endfor %}
 {% endblock %}
