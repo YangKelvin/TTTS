@@ -24,11 +24,6 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
-
-    def index():
-        return render_template('base.html')
-
     from . import db
     db.init_app(app)
 
@@ -37,6 +32,6 @@ def create_app(test_config=None):
 
     from . import goods
     app.register_blueprint(goods.bp)
-    app.add_url_rule('/goods', endpoint='index', view_func=index)
+    app.add_url_rule('/goods', endpoint='index')
 
     return app
