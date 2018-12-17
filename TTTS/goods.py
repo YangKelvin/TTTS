@@ -69,3 +69,52 @@ def addNewGoods():
             return redirect(url_for('goods.addNewGoods'))
 
     return render_template('goods/addNewGoods.html')
+
+def get_goods(id, check_author=True):
+    post = get_db().execute(
+        'SELECT GoodsID, GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin'
+        ' FROM GOODS'
+        ' WHERE GoodsID = ?',
+        (id,)
+    ).fetchone()
+
+    if post is None:
+        abort(404, "Post id {0} doesn't exist.".format(id))
+
+    if check_author and post['author_id'] != g.user['id']:
+        abort(403)
+
+    return post
+
+@bp.route('/<int:id>/update', methods=('GET', 'POST'))
+# @login_required
+def update(id):
+    post = get_goods(id)
+
+    if request.method == 'POST':
+        goodsName = request.form['goodsName']
+        goodsType = request.form['goodsType']
+        price = request.form['price']
+        stockQuantity = request.form['stockQuantity']
+        introduction = request.form['introduction']
+        imageName = request.form['imageName']
+        countryOfOrigin = request.form['countryOfOrigin']
+
+        error = None
+
+        if not goodsName:
+            error = 'GoodsName is required.'
+
+        if error is not None:
+            flash(error)
+        else:
+            db = get_db()
+            db.execute(
+                'UPDATE GOODS SET GoodsName = ?, GoodsType = ?, Price = ?, StockQuantity = ?, Intorduction = ?, ImageName = ?, CountryOfOrigin = ?'
+                ' WHERE id = ?',
+                (goodsName, goodsType, price, stockQuantity, introduction, imageName, countryOfOrigin, id)
+            )
+            db.commit()
+            return redirect(url_for('goods.index'))
+
+    return render_template('goods/updateGoods.html', post=post)
