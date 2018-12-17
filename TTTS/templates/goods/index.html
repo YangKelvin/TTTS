@@ -1,11 +1,16 @@
 {% block header %}
   <h1>{% block title %}商品s{% endblock %}</h1>
   {% if g.user %}
+    <a></a>
     <a class="action" href="{{ url_for('goods.addNewGoods') }}">New</a>
+    <li><a href="{{ url_for('user.logout') }}">Log Out</a>
   {% endif %}
 {% endblock %}
 
 {% block content %}
+    {% if g.user %}
+        <p>歡迎{{g.user['UserName']}}</h1>
+    {% endif %}
   {% for post in posts %}
     <article class="post">
       <header>
