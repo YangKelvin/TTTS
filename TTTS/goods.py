@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
+    Blueprint, flash, g, redirect, render_template, request, url_for, session
 )
 from werkzeug.exceptions import abort
 
@@ -115,60 +115,54 @@ def updateGoods(id):
             return redirect(url_for('goods.index'))
     
     return render_template('goods/updateGoods.html', post=post)
-
+    
 # 未測試
-# 待討論
 @bp.route('/<int:id>/view', methods=('GET', 'POST'))
 @login_required
 def view_goods(id):
     post = get_goods(id)
 
     if request.method == 'POST':
-        return redirect(url_for('goods.index'))
-    
-    return render_template('goods/index.html', post=post)
-    
-# 未測試
-@bp.route('/<int:id>/putInShoppingCart', methods=('POST',))
-# @login_required
-def putInShoppingCart(id):
-    post = get_goods(id)
-    db = get_db()
-    amount = request.form['goodsAmount']
+        db = get_db()
+        amount = request.form['goodsAmount']
+        # 從GOODS中取得所選商品
+        selectedGoods = db.execute(
+            'SELECT G.Amount'
+            ' FROM GOODS AS G'
+            ' WHERE G.GoodsID = ?',
+            (id,)
+        ).fetchone()
 
-    # 從GOODS中取得所選商品
-    selectedGoods = db.execute(
-        'SELECT *'
-        ' FROM GOODS AS G'
-        ' WHERE G.GoodsID = ?',
-        (id,)
-    )
+        # 從SHOPPINGCART中取得所選商品
+        selectedShoppingCartGoods = db.execute(
+            'SELECT S.Amount'
+            ' FROM SHOPPINGCART AS S'
+            ' WHERE AccountID = ? AND S.GoodsID = ?',
+            (session.get['user_id'], id,)
+        ).fetchone()
 
-    # 從SHOPPINGCART中取得所選商品
-    selectedShoppingCartGoods = db.execute(
-        'SELECT *'
-        ' FROM SHOPPINGCART AS S'
-        ' WHERE AccountID = ? AND S.GoodsID = ?',
-        (g.user['AccountID'], id,)
-    )
+        # 修改SHOPPINGCART內的資訊
+        if selectedShoppingCartGoods is None:
+            db.execute('INSERT INTO SHOPPINGCART (AccountID, GoodsID, Amount) VALUES (?, ?, ?)', (session.get('user_id'), id, amount,))
+        else:
+            db.execute(
+                'UPDATE SHOPPINGCART SET Amount = ?'
+                ' WHERE AccountID = ? AND GoodsID = ?',
+                # selectedShoppingCartGoods[0] 不確定
+                (selectedShoppingCartGoods[0] + amount, session.get('user_id'), id,)
+            )
 
-    # 修改SHOPPINGCART內的資訊
-    if selectedShoppingCartGoods is None:
-        db.execute('INSERT INTO SHOPPINGCART (AccountID, GoodsID, Amount) VALUES (?, ?, ?)', (g.user['AccountID'], id, amount,))
-    else:
+        # 修改GOODS中的StockQuantity
         db.execute(
-            'UPDATE SHOPPINGCART SET Amount = ?'
-            ' WHERE AccountID = ? AND GoodsID = ?',
-            (selectedShoppingCartGoods['Amount'] + amount, g.user['AccountID'], id,)
+            'UPDATE GOODS SET StockQuantity = ?'
+            ' WHERE GoodsID = ?',
+            # selectedGoods[0] 不確定
+            (selectedGoods[0] - amount, id,)
         )
-
-    # 修改GOODS中的StockQuantity
-    db.execute(
-        'UPDATE GOODS SET StockQuantity = ?'
-        ' WHERE GoodsID = ?',
-        (selectedGoods['Amount'] - amount, id,)
-    )
-    db.commit()
+        db.commit()
+        # 待修改
+        return redirect(url_for('goods.index'))
 
     # 待修改
     return render_template('goods/index.html', post=post)
+
