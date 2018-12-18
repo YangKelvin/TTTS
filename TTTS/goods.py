@@ -70,16 +70,27 @@ def addNewGoods():
 
     return render_template('goods/addNewGoods.html')
 
-def get_goods(id, check_author=True):
+def get_goods(GoodsID, check_author=True):
     post = get_db().execute(
         'SELECT GoodsID, GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin'
         ' FROM GOODS'
         ' WHERE GoodsID = ?',
-        (id,)
+        (GoodsID,)
     ).fetchone()
 
     if post is None:
         abort(404, "Post id {0} doesn't exist.".format(id))
+
+    return post
+
+def get_shoppingCart_goods(AccountID, check_author=True):
+    post = get_db().execute(
+        'SELECT G.GoodsID, G.GoodsName, G.GoodsType, G.Price, G.ImageName, G.CountryOfOrigin, CART.Amount'
+        ' FROM GOODS AS G,'
+        ' (SELECT S.GoodsID, S.Amount FROM SHOPPINGCART AS S WHERE S.AccountID = ?) CART'
+        ' WHERE G.GoodsID = CART.GoodsID',
+        (AccountID,)
+    ).fetchall()
 
     return post
 
@@ -115,6 +126,26 @@ def updateGoods(id):
             return redirect(url_for('goods.index'))
     
     return render_template('goods/updateGoods.html', post=post)
+    
+# 未測試
+@bp.route('/<int:id>/deleteShoppingCartGoods', methods=('GET', 'POST'))
+@login_required
+def delete_shoppingCart_goods(id):
+    # 取得SHOPPINGCART的商品
+    post = get_shoppingCart_goods(id)
+
+    if request.method == 'POST':
+        db = get_db()
+        # 永健大大來幫我
+        # 永健大大來幫我
+        # 永健大大來幫我
+        db.execute('DELETE FROM SHOPPINGCART WHERE SHOPPINGCART.GoodsID = ?', (id,))
+        db.commit()
+        # 待修改
+        return redirect(url_for('goods.index'))
+
+    # 待修改
+    return render_template('goods/index.html', post=post)
     
 # 未測試
 @bp.route('/<int:id>/view', methods=('GET', 'POST'))
