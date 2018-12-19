@@ -27,7 +27,7 @@
                 <a class="action" href="{{ url_for('goods.updateGoods', id=post['GoodsID']) }}">Edit</a>
             {% endif %}
             {% if g.user['PermissionID'] == 3%}
-                <a class="action" href="{{ url_for('goods.addNewGoods', id=post['id']) }}">Buy</a>
+                <a class="action" href="{{ url_for('goods.buyGoods', GoodsID=post['GoodsID']) }}">Buy</a>
             {% endif %}
             <div class="about">{{ post['Introduction'] }} price: {{ post['Price']}}元</div>
         </article>

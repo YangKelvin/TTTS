@@ -1,0 +1,33 @@
+<!doctype html>
+<title>買買買</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='stylee.css') }}">
+
+<h1>買買買</h1>
+
+<form method="post">
+    <label for="goodsName">名稱：{{ post['goodsName'] }}</label>
+    <p></p>
+    <label for="goodsType">茶種：{{ post['GoodsType'] }}</label>
+    <p></p>
+    <label for="price">價格：{{ post['Price'] }}</label>
+    <p></p>
+    <label for="stockQuantity">庫存：{{ post['StockQuantity'] }}</label>
+    <p></p>
+    <label for="introduction">介紹：</label>
+    <p></p>
+    <input name="introduction" id="introduction" value="{{ post['Introduction'] }}" >
+    <p></p>
+    <label for="imageName">圖片</label>
+    <input type="file" name="imageName" id="imageName" accept="image/*">
+    <p></p>
+    <label for="countryOfOrigin">產地：{{ temp }}</label>
+    <p></p>
+    <label for="amount">購買數量</label>
+    <input name="amount" id="amount" value="{{ request.form['amount'] }}" required>
+    <input type="submit" value="Buy">
+</form>
+<form action="{{ url_for('goods.addToShoppingCart', GoodsID=post['GoodsID']) }}" method="post">
+    <label for="amount2">放入購物車數量</label>
+    <input name="amount2" id="amount2" value="{{ request.form['amount'] }}" required>
+    <input class="addToShoppintCart" type="submit" value="加入購物車">
+</form>

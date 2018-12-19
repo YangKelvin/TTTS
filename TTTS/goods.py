@@ -9,6 +9,7 @@ from TTTS.db import get_db
 # bp = Blueprint('goods', __name__)
 bp = Blueprint('goods', __name__, url_prefix='/goods')
 
+# 初始化
 @bp.route('/init', methods=('GET', 'POST'))
 def init():
     print ('init goods')
@@ -28,6 +29,7 @@ def init():
     db.commit()
     return redirect(url_for('index'))
 
+# index
 @bp.route('/')
 def index():
     db = get_db()
@@ -94,6 +96,7 @@ def get_shoppingCart_goods(AccountID, check_author=True):
 
     return post
 
+# 修改商品
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 # @login_required
 def updateGoods(id):
@@ -137,9 +140,76 @@ def deleteGoods(id):
     db.commit()
     print('delete')
     return redirect(url_for('goods.index'))
-
+# --------------------------------
     
-# 未測試
+# 顧客
+@bp.route('/<int:GoodsID>/buyGoods', methods=('GET', 'POST'))
+def buyGoods(GoodsID):
+    print ('buy')
+    goods = get_goods(GoodsID)
+
+    if (request.method == 'POST'):
+        amount = request.form['amount']
+
+        db = get_db()
+
+        # 判斷庫存數量是否大於購買數量
+        originAmount = goods['StockQuantity']
+        resutlAmount = int(originAmount) - int(amount)
+
+        # 若送出的訂單數量合法
+        if (resutlAmount >= 0):
+            # 新增訂單（SALES_ON）
+            db.execute(
+                'INSERT INTO SALES_ON (AccountID, GoodsID, Amount) '
+                'VALUES (?, ?, ?)', 
+                (session.get('user_id'), goods['GoodsID'], amount,)
+            )
+
+            # 新增訂單（ORDERS）
+            
+            # 更新商品庫存
+            db.execute(
+                'UPDATE GOODS SET StockQuantity = ?'
+                ' WHERE GoodsID = ?',
+                (resutlAmount, goods['GoodsID'])
+            )
+            return redirect(url_for('goods.index'))
+    temp = '台灣'
+    return render_template('goods/buyGoods.html', post=goods, temp=temp)
+
+# 加到購物車
+@bp.route('/<int:GoodsID>/addGoodsToShoppingCart', methods=('GET', 'POST'))
+def addToShoppingCart(GoodsID):
+    print ('Add')
+    goods = get_goods(GoodsID)
+
+    if (request.method == 'POST'):
+        amount = request.form['amount2']
+
+        db = get_db()
+
+        # 判斷庫存數量是否大於購買數量
+        originAmount = goods['StockQuantity']
+        resutlAmount = int(originAmount) - int(amount)
+
+        # 若送出的訂單數量合法
+        if (resutlAmount >= 0):
+            # 新增訂單（SALES_ON）
+            db.execute(
+                'INSERT INTO SHOPPINGCART (AccountID, GoodsID, Ammount) '
+                'VALUES (?, ?, ?)', 
+                (session.get('user_id'), goods['GoodsID'], amount,)
+            )
+            db.commit()
+
+            return redirect(url_for('goods.index'))
+        else:
+            print('庫存不夠')
+    temp = '台灣'
+    return render_template('goods/buyGoods.html', post=goods, temp=temp)
+
+
 @bp.route('/<int:id>/deleteShoppingCartGoods', methods=('GET', 'POST'))
 @login_required
 def delete_shoppingCart_goods(id):
@@ -208,4 +278,3 @@ def view_goods(id):
 
     # 待修改
     return render_template('goods/index.html', post=post)
-
