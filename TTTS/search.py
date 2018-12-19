@@ -3,7 +3,7 @@ from flask import (
 )
 from TTTS.db import get_db
 
-bp = Blueprint('search', __name__, url_prefix='search')
+bp = Blueprint('search', __name__, url_prefix='/search')
 
 @bp.route('/', methods=('GET', 'POST'))
 def search():
