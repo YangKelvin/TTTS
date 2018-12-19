@@ -4,6 +4,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.exceptions import abort
 
 from TTTS.db import get_db
 
@@ -131,3 +132,40 @@ def load_logged_in_user():
 def logout():
     session.clear()
     return redirect(url_for('index'))
+
+# 未測試
+def get_user(uid):
+    db = get_db
+    user = db.execute(
+        'SELECT * FROM ACCOUNT AS A'
+        ' WHERE A.AccountID = ?',
+        (uid,)
+    ).fetchone()
+
+    if user is None:
+        abort(404, "User id {0} doesn't exist.".format(id))
+
+    return user
+
+# 未測試
+@bp.route('<int:user_id>/editPermission', methods=('GET', 'POST'))
+def edit(user_id):
+    user = get_user(user_id)
+
+    if request.method == 'POST':
+        db = get_db
+        permission = request.form['permission']
+
+        if permission is None:
+            error = 'Permission error'
+
+        if error is None:
+            db.execute('UPDATE ACCOUNT SET PermissionID = ?', (permission,))
+            db.commit()
+            # 待修改
+            return redirect(url_for('user.userList'))
+        
+        flash(error)
+    
+    # 待修改
+    return render_template('user/userInformation.html', user=user)
