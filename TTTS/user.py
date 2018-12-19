@@ -191,10 +191,8 @@ def edit(user_id):
 
 # 未測試
 # admin創建帳號
-@bp.route('/<user_id>/create', methods=('GET', 'POST'))
+@bp.route('/create', methods=('GET', 'POST'))
 def create(user_id):
-    user = get_user(user_id)
-
     if request.method == 'POST':
         account = request.form['account']
         password = request.form['password']
