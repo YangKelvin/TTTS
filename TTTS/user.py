@@ -102,12 +102,8 @@ def login():
             error = 'Incorrect password.'
 
         if error is None:
-            print(user['AccountID'])
-            print ('Account=' + user['ACCOUNT'])
             session.clear()
             session['user_id'] = user['AccountID']
-            print ('login')
-            print(session.get('user_id'))
             return redirect(url_for('index'))
 
         flash(error)
@@ -118,7 +114,6 @@ def login():
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
-    print(user_id)
     if user_id is None:
         g.user = None
     else:

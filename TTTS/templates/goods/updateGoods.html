@@ -2,7 +2,7 @@
 <title>北科茗茶 - 新增商品</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='stylee.css') }}">
 
-<h1>新增商品</h1>
+<h1>修改商品</h1>
 
 <form method="post">
     <label for="goodsName">茶種</label>
@@ -14,10 +14,13 @@
     <label for="stockQuantity">數量</label>
     <input name="stockQuantity" id="stockQuantity" value="{{ request.form['stockQuantity'] or post['stockQuantity'] }}" required>
     <label for="introduction">介紹</label>
-    <input name="introduction" id="introduction" value="{{ request.form['introduction'] or post['introduction'] }}" required>
+    <input name="introduction" id="introduction" value="{{ request.form['introduction'] or post['introduction'] }}" >
     <label for="imageName">圖片</label>
-    <input type="file" name="imageName" id="imageName" accept="image/*" required>
+    <input type="file" name="imageName" id="imageName" accept="image/*">
     <label for="countryOfOrigin">產地</label>
     <input name="countryOfOrigin" id="countryOfOrigin" value="{{ request.form['countryOfOrigin'] or post['countryOfOrigin'] }}" required>
     <input type="submit" value="Update">
+</form>
+<form action="{{ url_for('goods.deleteGoods', id=post['GoodsID']) }}" method="post">
+    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
 </form>

@@ -38,7 +38,7 @@ def index():
     ).fetchall()
     return render_template('goods/index.html', posts=posts)
 
-
+# 新增產品
 @bp.route('/addNewGoods', methods=('GET', 'POST'))
 # @login_required
 def addNewGoods():
@@ -97,6 +97,7 @@ def get_shoppingCart_goods(AccountID, check_author=True):
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 # @login_required
 def updateGoods(id):
+    print ('update')
     post = get_goods(id)
 
     if request.method == 'POST':
@@ -126,6 +127,17 @@ def updateGoods(id):
             return redirect(url_for('goods.index'))
     
     return render_template('goods/updateGoods.html', post=post)
+
+@bp.route('/<int:id>/delete', methods=('POST',))
+def deleteGoods(id):
+    print('delete1')
+    get_goods(id)
+    db = get_db()
+    db.execute('DELETE FROM GOODS WHERE GoodsID = ?', (id,))
+    db.commit()
+    print('delete')
+    return redirect(url_for('goods.index'))
+
     
 # 未測試
 @bp.route('/<int:id>/deleteShoppingCartGoods', methods=('GET', 'POST'))
