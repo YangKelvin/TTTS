@@ -49,6 +49,19 @@ def init():
     db.commit()
     return redirect(url_for('user.login'))
 
+def get_shoppingcart(GoodsID, check_author=True):
+    post = get_db().execute(
+        'SELECT GoodsID, GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin'
+        ' FROM GOODS'
+        ' WHERE GoodsID = ?',
+        (GoodsID,)
+    ).fetchone()
+
+    if post is None:
+        abort(404, "Post id {0} doesn't exist.".format(id))
+
+    return post
+
 # register
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
@@ -109,6 +122,19 @@ def login():
         flash(error)
 
     return render_template('user/login.html')
+
+@bp.route('/shoppingCart', methods=('GET', 'POST'))
+def shoppingcart():
+    user = g.user
+    db = get_db()
+    myShoppingcart = db.execute(
+        'Select B.Account, C.GoodsName, A.Ammount '
+        'FROM SHOPPINGCART AS A, ACCOUNT AS B, GOODS AS C '
+        'WHERE (A.AccountID=B.AccountID) and (A.GoodsID = C.GoodsID) and '
+        'A.AccountID = ?',
+        (user['AccountID'],)
+    ).fetchall()
+    return render_template('user/shoppingcart.html', shoppingcart=myShoppingcart)
 
 # 待修改
 @bp.before_app_request
