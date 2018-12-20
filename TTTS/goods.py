@@ -29,7 +29,7 @@ def init():
     db.commit()
     return redirect(url_for('index'))
 
-# index
+# goods index
 @bp.route('/')
 def index():
     db = get_db()
@@ -72,6 +72,7 @@ def addNewGoods():
 
     return render_template('goods/addNewGoods.html')
 
+# 取得商品資訊
 def get_goods(GoodsID, check_author=True):
     post = get_db().execute(
         'SELECT GoodsID, GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin'
@@ -85,6 +86,7 @@ def get_goods(GoodsID, check_author=True):
 
     return post
 
+# 取得購物車內的商品(?)
 def get_shoppingCart_goods(AccountID, check_author=True):
     post = get_db().execute(
         'SELECT G.GoodsID, G.GoodsName, G.GoodsType, G.Price, G.ImageName, G.CountryOfOrigin, CART.Amount'
@@ -96,7 +98,7 @@ def get_shoppingCart_goods(AccountID, check_author=True):
 
     return post
 
-# 修改商品
+# 修改商品資訊
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 # @login_required
 def updateGoods(id):
@@ -131,6 +133,7 @@ def updateGoods(id):
     
     return render_template('goods/updateGoods.html', post=post)
 
+# 刪除特定商品
 @bp.route('/<int:id>/delete', methods=('POST',))
 def deleteGoods(id):
     print('delete1')
@@ -143,8 +146,9 @@ def deleteGoods(id):
 # --------------------------------
     
 # 顧客
-@bp.route('/<int:GoodsID>/buyGoods', methods=('GET', 'POST'))
-def buyGoods(GoodsID):
+# 查看商品資訊
+@bp.route('/<int:GoodsID>/viewGoods', methods=('GET', 'POST'))
+def viewGoods(GoodsID):
     print ('buy')
     goods = get_goods(GoodsID)
 
@@ -176,7 +180,7 @@ def buyGoods(GoodsID):
             )
             return redirect(url_for('goods.index'))
     temp = '台灣'
-    return render_template('goods/buyGoods.html', post=goods, temp=temp)
+    return render_template('goods/viewGoods.html', post=goods, temp=temp)
 
 # 加到購物車
 @bp.route('/<int:GoodsID>/addGoodsToShoppingCart', methods=('GET', 'POST'))
@@ -207,8 +211,11 @@ def addToShoppingCart(GoodsID):
         else:
             print('庫存不夠')
     temp = '台灣'
-    return render_template('goods/buyGoods.html', post=goods, temp=temp)
+    return render_template('goods/viewGoods.html', post=goods, temp=temp)
 
+# 購買購物車裡面的商品
+
+# 購買單個商品
 
 @bp.route('/<int:id>/deleteShoppingCartGoods', methods=('GET', 'POST'))
 @login_required
