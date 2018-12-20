@@ -129,7 +129,7 @@ def shoppingcart():
     user = g.user
     db = get_db()
     myShoppingcart = db.execute(
-        'Select B.Account, C.GoodsName, A.Ammount '
+        'Select B.Account, C.GoodsName, A.Amount '
         'FROM SHOPPINGCART AS A, ACCOUNT AS B, GOODS AS C '
         'WHERE (A.AccountID=B.AccountID) and (A.GoodsID = C.GoodsID) and '
         'A.AccountID = ?',

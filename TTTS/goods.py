@@ -197,7 +197,7 @@ def addToShoppingCart(GoodsID):
         if (resutlAmount >= 0):
             # 新增訂單（SALES_ON）
             db.execute(
-                'INSERT INTO SHOPPINGCART (AccountID, GoodsID, Ammount) '
+                'INSERT INTO SHOPPINGCART (AccountID, GoodsID, Amount) '
                 'VALUES (?, ?, ?)', 
                 (session.get('user_id'), goods['GoodsID'], amount,)
             )
