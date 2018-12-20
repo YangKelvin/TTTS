@@ -30,6 +30,9 @@ def create_app(test_config=None):
     from . import user
     app.register_blueprint(user.bp)
 
+    from . import search
+    app.register_blueprint(search.bp)
+
     from . import goods
     app.register_blueprint(goods.bp)
     app.add_url_rule('/goods', endpoint='index')

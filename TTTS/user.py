@@ -4,6 +4,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.exceptions import abort
 
 from TTTS.db import get_db
 
@@ -152,3 +153,100 @@ def load_logged_in_user():
 def logout():
     session.clear()
     return redirect(url_for('index'))
+
+# 未測試
+def get_user(uid):
+    db = get_db
+    user = db.execute(
+        'SELECT * FROM ACCOUNT AS A'
+        ' WHERE A.AccountID = ?',
+        (uid,)
+    ).fetchone()
+
+    if user is None:
+        abort(404, "User id {0} doesn't exist.".format(id))
+
+    return user
+
+# 未測試
+# 修改帳號資料
+@bp.route('/<int:user_id>/editUser', methods=('GET', 'POST'))
+def edit(user_id):
+    user = get_user(user_id)
+
+    if request.method == 'POST':
+        db = get_db
+        account = request.form['account']
+        password = request.form['password']
+        permission = request.form['permission']
+        name = request.form['username']
+        identificationNumber = request.form['identification']
+        gender = request.form['gender']
+        cellphone = request.form['cellphone']
+        email = request.form['email']
+
+        if account is None:
+            error = 'Account is required.'
+        elif password is None:
+            error = 'Password is required.'
+        elif int(permission) not in [1, 2, 3]:
+            error = 'Permission error.'
+        elif db.execute(
+            'SELECT AccountID FROM ACCOUNT WHERE Account = ?', (account,)
+        ).fetchone() is not None:
+            error = 'Account {} is already registered.'.format(account)
+
+        if error is None:
+            db.execute('UPDATE ACCOUNT SET Account = ?, Password = ?, PermissionID = ?, UserName = ?, IdentificationNumber = ?'
+            ' Gender = ?, CellphoneNumber = ?, Email = ?'
+            ' WHERE AccountID = ?', 
+            (account, password, permission, name, identificationNumber, gender, cellphone, email, user_id))
+            db.commit()
+            # 待修改
+            return redirect(url_for('user.userList'))
+        
+        flash(error)
+    
+    # 待修改
+    return render_template('user/userInformation.html', user=user)
+
+# 未測試
+# admin創建帳號
+@bp.route('/create', methods=('GET', 'POST'))
+def create(user_id):
+    if request.method == 'POST':
+        account = request.form['account']
+        password = request.form['password']
+        permission = request.form['permission']
+        username = request.form['username']
+        id = request.form['identification']
+        gender = request.form['gender']
+        cellphone = request.form['cellphone']
+        email = request.form['email']
+        db = get_db()
+        error = None
+
+        if not account:
+            error = 'Account is required.'
+        elif not password:
+            error = 'Password is required.'
+        elif int(permission) not in [1, 2, 3]:
+            error = 'Permission error.'
+        elif db.execute(
+            'SELECT AccountID FROM ACCOUNT WHERE Account = ?', (account,)
+        ).fetchone() is not None:
+            error = 'Account {} is already registered.'.format(account)
+
+        # 待修改
+        if error is None:
+            db.execute(
+                'INSERT INTO ACCOUNT (Account, Password, PermissionID, UserName, IdentificationNumber, Gender, CellphoneNumber, Email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                (account, generate_password_hash(password), permission, username, id, gender, cellphone, email)
+            )
+            db.commit()
+            # 待修改
+            return redirect(url_for('user.login'))
+
+        flash(error)
+    # 待修改
+    return render_template('user/register.html')

@@ -262,7 +262,7 @@ def view_goods(id):
                 'UPDATE SHOPPINGCART SET Amount = ?'
                 ' WHERE AccountID = ? AND GoodsID = ?',
                 # selectedShoppingCartGoods[0] 不確定
-                (selectedShoppingCartGoods[0] + amount, session.get('user_id'), id,)
+                (selectedShoppingCartGoods['Amount'] + amount, session.get('user_id'), id,)
             )
 
         # 修改GOODS中的StockQuantity
@@ -270,7 +270,7 @@ def view_goods(id):
             'UPDATE GOODS SET StockQuantity = ?'
             ' WHERE GoodsID = ?',
             # selectedGoods[0] 不確定
-            (selectedGoods[0] - amount, id,)
+            (selectedGoods['Amount'] - amount, id,)
         )
         db.commit()
         # 待修改
