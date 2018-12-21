@@ -266,24 +266,20 @@ def addToShoppingCart(GoodsID):
 
 # 購買單個商品
 
-@bp.route('/<int:id>/deleteShoppingCartGoods', methods=('GET', 'POST'))
+@bp.route('/<int:GoodsID>/deleteShoppingCartGoods', methods=('GET', 'POST'))
 @login_required
-def delete_shoppingCart_goods(id):
+def delete_shoppingCart_goods(GoodsID):
     # 取得SHOPPINGCART的商品
-    post = get_shoppingCart_goods(id)
-
-    if request.method == 'POST':
-        db = get_db()
-        # 永健大大來幫我
-        # 永健大大來幫我
-        # 永健大大來幫我
-        db.execute('DELETE FROM SHOPPINGCART WHERE SHOPPINGCART.GoodsID = ?', (id,))
-        db.commit()
-        # 待修改
-        return redirect(url_for('goods.index'))
-
+    deleteGoods = get_goods(GoodsID)
+    deleteGoodsID = deleteGoods['GoodsID']
+    print('delete goods id:' + str(deleteGoods['GoodsID']))
+    print('current user id:' + str(session.get('user_id')))
+    # 刪除
+    db = get_db()
+    db.execute('DELETE FROM SHOPPINGCART WHERE SHOPPINGCART.GoodsID = ? AND SHOPPINGCART.AccountID = ?', (int(deleteGoodsID),int(session.get('user_id')),))
+    db.commit()
     # 待修改
-    return render_template('goods/index.html', post=post)
+    return redirect(url_for('goods.index'))
     
 # 未測試
 @bp.route('/<int:id>/view', methods=('GET', 'POST'))
