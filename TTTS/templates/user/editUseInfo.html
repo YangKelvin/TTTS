@@ -1,0 +1,24 @@
+{% for message in get_flashed_messages() %}
+  <div class="flash">{{ message }}</div>
+{% endfor %}
+{% block content %}
+  <form method="post">
+    <label for="username">Username</label>
+    <input name="username" id="username" value="{{ request.form['UserName'] or user['UserName'] }}" required>
+    <label for="account">Account</label>
+    <input name="account" id="account" value="{{ request.form['Account'] or user['Account'] }}" required>
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" required>
+    <label for="permission">Permission</label>
+    <input type="permission" name="permission" id="permission" value="{{ request.form['PermissionID'] or user['PermissionID'] }}" required>
+    <label for="identification">Identification Number</label>
+    <input type="identification" name="identification" id="identification" value="{{ request.form['IdentificationNumber'] or user['IdentificationNumber'] }}" required>
+    <label for="gender">Gender</label>
+    <input type="gender" name="gender" id="gender" value="{{ request.form['Gender'] or user['Gender'] }}" required>
+    <label for="cellphone">Cellphone</label>
+    <input type="cellphone" name="cellphone" id="cellphone" value="{{ request.form['CellphoneNumber'] or user['CellphoneNumber'] }}" required>
+    <label for="email">E-mail</label>
+    <input type="email" name="email" id="email" value="{{ request.form['Email'] or user['Email'] }}" required>
+    <input type="submit" value="Edit">    
+  </form>
+{% endblock %}
