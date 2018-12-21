@@ -129,7 +129,7 @@ def updateGoods(id):
             db.commit()
             return redirect(url_for('goods.index'))
     
-    return render_template('goods/updateGoods.html', post=post)
+    return render_template('goods/updateGoods.html', posts=post)
 
 @bp.route('/<int:id>/delete', methods=('POST',))
 def deleteGoods(id):
@@ -141,7 +141,6 @@ def deleteGoods(id):
     print('delete')
     return redirect(url_for('goods.index'))
 # --------------------------------
-    
 # 顧客
 @bp.route('/<int:GoodsID>/buyGoods', methods=('GET', 'POST'))
 def buyGoods(GoodsID):
@@ -176,7 +175,7 @@ def buyGoods(GoodsID):
             )
             return redirect(url_for('goods.index'))
     temp = '台灣'
-    return render_template('goods/buyGoods.html', post=goods, temp=temp)
+    return render_template('goods/buyGoods.html', posts=goods, temp=temp)
 
 # 加到購物車
 @bp.route('/<int:GoodsID>/addGoodsToShoppingCart', methods=('GET', 'POST'))
@@ -207,7 +206,7 @@ def addToShoppingCart(GoodsID):
         else:
             print('庫存不夠')
     temp = '台灣'
-    return render_template('goods/buyGoods.html', post=goods, temp=temp)
+    return render_template('goods/buyGoods.html', posts=goods, temp=temp)
 
 
 @bp.route('/<int:id>/deleteShoppingCartGoods', methods=('GET', 'POST'))
@@ -227,7 +226,7 @@ def delete_shoppingCart_goods(id):
         return redirect(url_for('goods.index'))
 
     # 待修改
-    return render_template('goods/index.html', post=post)
+    return render_template('goods/index.html', posts=post)
     
 # 未測試
 @bp.route('/<int:id>/view', methods=('GET', 'POST'))
@@ -277,4 +276,4 @@ def view_goods(id):
         return redirect(url_for('goods.index'))
 
     # 待修改
-    return render_template('goods/index.html', post=post)
+    return render_template('goods/index.html', posts=post)
