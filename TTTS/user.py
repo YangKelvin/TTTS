@@ -156,7 +156,7 @@ def logout():
 
 # 未測試
 def get_user(uid):
-    db = get_db
+    db = get_db()
     user = db.execute(
         'SELECT * FROM ACCOUNT AS A'
         ' WHERE A.AccountID = ?',
@@ -168,14 +168,20 @@ def get_user(uid):
 
     return user
 
-# 未測試
+@bp.route('/userList', methods=('GET', 'POST'))
+def userList():
+    db = get_db()
+    user = db.execute('SELECT * FROM ACCOUNT')
+    return render_template('user/userList.html', user = user)
+
 # 修改帳號資料
 @bp.route('/<int:user_id>/editUser', methods=('GET', 'POST'))
 def edit(user_id):
     user = get_user(user_id)
 
     if request.method == 'POST':
-        db = get_db
+        error = None
+        db = get_db()
         account = request.form['account']
         password = request.form['password']
         permission = request.form['permission']
@@ -189,31 +195,33 @@ def edit(user_id):
             error = 'Account is required.'
         elif password is None:
             error = 'Password is required.'
-        elif int(permission) not in [1, 2, 3]:
+        elif (not permission.isdigit()) or (int(permission) not in [1, 2, 3]):
             error = 'Permission error.'
         elif db.execute(
             'SELECT AccountID FROM ACCOUNT WHERE Account = ?', (account,)
-        ).fetchone() is not None:
+        ).fetchone()['AccountID'] is not user['AccountID']:
             error = 'Account {} is already registered.'.format(account)
 
         if error is None:
-            db.execute('UPDATE ACCOUNT SET Account = ?, Password = ?, PermissionID = ?, UserName = ?, IdentificationNumber = ?'
+            db.execute('UPDATE ACCOUNT SET Account = ?, Password = ?, PermissionID = ?, UserName = ?, IdentificationNumber = ?,'
             ' Gender = ?, CellphoneNumber = ?, Email = ?'
             ' WHERE AccountID = ?', 
-            (account, password, permission, name, identificationNumber, gender, cellphone, email, user_id))
+            (account, generate_password_hash(password), permission, name, identificationNumber, gender, cellphone, email, user_id))
             db.commit()
             # 待修改
             return redirect(url_for('user.userList'))
-        
+
         flash(error)
     
     # 待修改
-    return render_template('user/userInformation.html', user=user)
+    return render_template('user/editUseInfo.html', user=user)
 
-# 未測試
 # admin創建帳號
 @bp.route('/create', methods=('GET', 'POST'))
-def create(user_id):
+def create():
+    if g.user['PermissionID'] is not 1:
+        return redirect(url_for('user.login'))
+
     if request.method == 'POST':
         account = request.form['account']
         password = request.form['password']
@@ -230,7 +238,7 @@ def create(user_id):
             error = 'Account is required.'
         elif not password:
             error = 'Password is required.'
-        elif int(permission) not in [1, 2, 3]:
+        elif (not permission.isdigit()) or (int(permission) not in [1, 2, 3]):
             error = 'Permission error.'
         elif db.execute(
             'SELECT AccountID FROM ACCOUNT WHERE Account = ?', (account,)
@@ -249,4 +257,4 @@ def create(user_id):
 
         flash(error)
     # 待修改
-    return render_template('user/register.html')
+    return render_template('user/create.html')
