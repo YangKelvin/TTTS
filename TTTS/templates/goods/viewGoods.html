@@ -4,7 +4,8 @@
 
 <h1>商品資訊</h1>
 
-<form method="post">
+<!-- <form method="post"> -->
+<form action="{{ url_for('goods.buyGoods', GoodsID=post['GoodsID']) }}">
     <label for="goodsName">名稱：{{ post['goodsName'] }}</label>
     <p></p>
     <label for="goodsType">茶種：{{ post['GoodsType'] }}</label>
@@ -22,8 +23,6 @@
     <p></p>
     <label for="countryOfOrigin">產地：{{ temp }}</label>
     <p></p>
-    <label for="amount">購買數量</label>
-    <input name="amount" id="amount" value="{{ request.form['amount'] }}" required>
     <input type="submit" value="Buy">
 </form>
 <form action="{{ url_for('goods.addToShoppingCart', GoodsID=post['GoodsID']) }}" method="post">

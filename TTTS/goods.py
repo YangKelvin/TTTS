@@ -9,26 +9,6 @@ from TTTS.db import get_db
 # bp = Blueprint('goods', __name__)
 bp = Blueprint('goods', __name__, url_prefix='/goods')
 
-# 初始化
-@bp.route('/init', methods=('GET', 'POST'))
-def init():
-    print ('init goods')
-    db = get_db()
-    db.execute(
-        'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        ('好好喝綠茶', '綠茶', '100', '5', '好喝的綠茶喔', 'goodGreenTea.png', '1')
-    )
-    db.execute(
-        'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        ('好好喝紅茶', '紅茶', '100', '5', '好喝的紅茶喔', 'goodBlackTea.png', '1')
-    )
-    db.execute(
-        'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        ('好好喝烏龍茶', '烏龍茶', '100', '5', '好喝的綠茶喔', 'goodGreenTea.png', '1')
-    )
-    db.commit()
-    return redirect(url_for('index'))
-
 # goods index
 @bp.route('/')
 def index():
@@ -149,38 +129,107 @@ def deleteGoods(id):
 # 查看商品資訊
 @bp.route('/<int:GoodsID>/viewGoods', methods=('GET', 'POST'))
 def viewGoods(GoodsID):
-    print ('buy')
+    print ('view')
     goods = get_goods(GoodsID)
 
     if (request.method == 'POST'):
-        amount = request.form['amount']
+        print("go to buy goods page")
+        buyGoods(GoodsID)
 
-        db = get_db()
+        # amount = request.form['amount']
+
+        # db = get_db()
 
         # 判斷庫存數量是否大於購買數量
-        originAmount = goods['StockQuantity']
-        resutlAmount = int(originAmount) - int(amount)
+        # originAmount = goods['StockQuantity']
+        # resutlAmount = int(originAmount) - int(amount)
 
         # 若送出的訂單數量合法
-        if (resutlAmount >= 0):
+        # if (resutlAmount >= 0):
             # 新增訂單（SALES_ON）
-            db.execute(
-                'INSERT INTO SALES_ON (AccountID, GoodsID, Amount) '
-                'VALUES (?, ?, ?)', 
-                (session.get('user_id'), goods['GoodsID'], amount,)
-            )
+            # db.execute(
+            #     'INSERT INTO SALES_ON (AccountID, GoodsID, Amount) '
+            #     'VALUES (?, ?, ?)', 
+            #     (session.get('user_id'), goods['GoodsID'], amount,)
+            # )
 
             # 新增訂單（ORDERS）
             
             # 更新商品庫存
-            db.execute(
-                'UPDATE GOODS SET StockQuantity = ?'
-                ' WHERE GoodsID = ?',
-                (resutlAmount, goods['GoodsID'])
-            )
-            return redirect(url_for('goods.index'))
+            # db.execute(
+            #     'UPDATE GOODS SET StockQuantity = ?'
+            #     ' WHERE GoodsID = ?',
+            #     (resutlAmount, goods['GoodsID'])
+            # )
+            # return redirect(url_for('goods.index'))
     temp = '台灣'
     return render_template('goods/viewGoods.html', post=goods, temp=temp)
+
+@bp.route('/<int:GoodsID>/buyGoods', methods=('GET', 'POST'))
+def buyGoods(GoodsID):
+    print('buy page')
+
+    # 取得購買的商品
+    buyGoods=get_goods(GoodsID)
+    print('--------goods--------')
+    print('GoodsID='+str(buyGoods['GoodsID']))
+    print('GoodsName='+str(buyGoods['GoodsName']))
+    print('GoodsType='+str(buyGoods['GoodsType']))
+    print('GoodsPrice='+str(buyGoods['Price']))
+    print('GoodsStockQuantity='+str(buyGoods['StockQuantity']))
+    print('ImageName='+str(buyGoods['ImageName']))
+    print('CountryOfOrigin='+str(buyGoods['CountryOfOrigin']))
+    print('---------------------')
+
+    if request.method == 'POST':
+        print('post')
+        address = request.form['addresss']
+        ShippingMethodID = request.form['shippingMethod']
+        paymentID = request.form['payment']
+        discount = request.form['discount']
+        orderAmount = request.form['orderAmount']
+        print('--------訂購資訊--------')
+        print('address:' + address)
+        print('shipping method id:' + ShippingMethodID)
+        print('payment id:' + paymentID)
+        print('discount:' + discount)
+        print('order amount:' + orderAmount)
+        print('---------------------')
+        # 如果有足夠的庫存
+        if (int(orderAmount) <= int(buyGoods['StockQuantity'])):
+            print('訂購成功')
+            db = get_db()
+            # 查詢折扣是否存在
+            # 新增訂單資料（ORDERS）
+            db.execute(
+                'INSERT INTO ORDERS (AccountID, Address, ShippingMethodID, StatusID, PaymentID) '
+                'VALUES (?, ?, ?, ?, ?)', 
+                (session.get('user_id'), address, ShippingMethodID, '1',paymentID,)
+            )
+
+            # 取得最新 OrderID
+            newOrder = db.execute(
+                'SELECT MAX(OrderID) AS ID FROM ORDERS'
+            ).fetchone()
+            OrderID = newOrder['ID']
+            print('OrderID:' + str(OrderID))
+            
+            # 新增訂單資料（SALES_ON）
+            db.execute(
+                'INSERT INTO SALES_ON (OrderID, GoodsID, Amount) '
+                'VALUES (?, ?, ?)', 
+                (OrderID, GoodsID, orderAmount,)
+            )
+
+            # 更新商品庫存
+            originAmount = buyGoods['StockQuantity']
+            db.execute(
+                'UPDATE GOODS SET StockQuantity = ? WHERE GOODSID = ? ',
+                (int(originAmount)-int(orderAmount), GoodsID)
+            )
+            db.commit()
+            return redirect(url_for('goods.index'))
+    return render_template('goods/buyGoods.html', goods=buyGoods)
 
 # 加到購物車
 @bp.route('/<int:GoodsID>/addGoodsToShoppingCart', methods=('GET', 'POST'))

@@ -95,6 +95,7 @@ CREATE TABLE DISCOUNTTYPE (
 CREATE TABLE DISCOUNT (
     DiscountID INTEGER PRIMARY KEY AUTOINCREMENT,
     DiscountName VARCHAR(20),
+    DiscountString VARCHAR(255),
     DiscountTypeID INTEGER,
     DiscountPercentage FLOAT,
     Date DATETIME,
@@ -147,6 +148,15 @@ CREATE TABLE SALES_ON (
     FOREIGN KEY(GoodsID) REFERENCES GOODS(GoodsID)
 );
 
-INSERT INTO PERMISSION VALUES (1, 'Admin');
-INSERT INTO PERMISSION VALUES (2, 'Staff');
-INSERT INTO PERMISSION VALUES (3, 'Customer');
+-- INSERT INTO PERMISSION VALUES (1, 'Admin');
+-- INSERT INTO PERMISSION VALUES (2, 'Staff');
+-- INSERT INTO PERMISSION VALUES (3, 'Customer');
+
+-- INSERT INTO DISCOUNTTYPE VALUES (1, 'Shipping');
+-- INSERT INTO DISCOUNTTYPE VALUES (2, 'Season');
+-- INSERT INTO DISCOUNTTYPE VALUES (3, 'Special');
+
+-- INSERT INTO DISCOUNT VALUES (1, 'shipping discount 1', 'shipping1', 1, 0.9);
+-- INSERT INTO DISCOUNT VALUES (2, 'shipping discount 2', 'shipping2', 1, 0.8);
+-- INSERT INTO DISCOUNT VALUES (3, 'season discount 1', 'season1', 2, 0.9);
+-- INSERT INTO DISCOUNT VALUES (4, 'special discount 1', 'special1', 3, 0.6);
