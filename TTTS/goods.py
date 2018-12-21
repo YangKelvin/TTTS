@@ -111,7 +111,7 @@ def updateGoods(id):
             db.commit()
             return redirect(url_for('goods.index'))
     
-    return render_template('goods/updateGoods.html', post=post)
+    return render_template('goods/updateGoods.html', posts=post)
 
 # 刪除特定商品
 @bp.route('/<int:id>/delete', methods=('POST',))
@@ -124,7 +124,6 @@ def deleteGoods(id):
     print('delete')
     return redirect(url_for('goods.index'))
 # --------------------------------
-    
 # 顧客
 # 查看商品資訊
 @bp.route('/<int:GoodsID>/viewGoods', methods=('GET', 'POST'))
@@ -329,4 +328,4 @@ def view_goods(id):
         return redirect(url_for('goods.index'))
 
     # 待修改
-    return render_template('goods/index.html', post=post)
+    return render_template('goods/index.html', posts=post)

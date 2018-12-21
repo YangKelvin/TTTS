@@ -1,0 +1,19 @@
+{% block content %}
+    {% for user in user %}
+        <article class="post">
+            <header>
+                <div>
+                    <h1>{{ user['UserName'] }}</h1>
+                </div>
+            </header>
+            {% if g.user['PermissionID'] == 1%}
+                <a class="action" href="{{ url_for('user.edit', user_id=user['AccountID']) }}">Edit</a>
+            {% endif %}
+            <div class="about"> gender: {{ user['Gender'] }} cellphone: {{ user['CellphoneNumber']}}</div>
+            <div class="about"> e-mail: {{ user['Email'] }}</div>
+        </article>
+        {% if not loop.last %}
+            <hr>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
