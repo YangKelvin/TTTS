@@ -48,7 +48,7 @@ def addNewGoods():
                 (goodsName, goodsType, price, stockQuantity, introduction, imageName, countryOfOrigin)
             )
             db.commit()
-            return redirect(url_for('goods.addNewGoods'))
+            return redirect(url_for('goods.index'))
 
     return render_template('goods/addNewGoods.html')
 
