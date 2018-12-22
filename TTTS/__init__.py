@@ -57,6 +57,18 @@ def create_app(test_config=None):
         print('init ACCOUNT')
         database.execute(
         'INSERT INTO ACCOUNT (Account, Password, PermissionID, UserName, IdentificationNumber, Gender, CellphoneNumber, Email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        ('admin', generate_password_hash('123'), '1', 'AdminA', 'A000000000', 'M', '0000000000', 'admin@ntut.org.tw')
+        )
+        database.execute(
+        'INSERT INTO ACCOUNT (Account, Password, PermissionID, UserName, IdentificationNumber, Gender, CellphoneNumber, Email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        ('staff', generate_password_hash('123'), '2', 'StaffA', 'A000000001', 'M', '0000000001', 'staff@ntut.org.tw')
+        )
+        database.execute(
+        'INSERT INTO ACCOUNT (Account, Password, PermissionID, UserName, IdentificationNumber, Gender, CellphoneNumber, Email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        ('customer', generate_password_hash('123'), '3', 'CustomerA', 'A000000002', 'M', '0000000002', 'customer@ntut.org.tw')
+        )
+        database.execute(
+        'INSERT INTO ACCOUNT (Account, Password, PermissionID, UserName, IdentificationNumber, Gender, CellphoneNumber, Email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
         ('105590045', generate_password_hash('123'), '1', 'kelvin', 'N123456789', 'M', '0975107900', 't105590045@ntut.org.tw')
         )
         database.execute(

@@ -8,7 +8,7 @@ from werkzeug.exceptions import abort
 
 from TTTS.db import get_db
 
-# 待修改
+# 查看是否登入
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
@@ -22,18 +22,31 @@ def login_required(view):
 # blueprint name='user'
 bp = Blueprint('user', __name__, url_prefix='/user')
 
-def get_shoppingcart(GoodsID, check_author=True):
-    post = get_db().execute(
-        'SELECT GoodsID, GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin'
-        ' FROM GOODS'
-        ' WHERE GoodsID = ?',
-        (GoodsID,)
+# 取得某個顧客的shopping cart 中的商品內容和金額
+def getShoppingCart(AccountID, check_author=True):
+    user = g.user
+    myShoppingCart = get_db().execute(
+        'Select B.Account, C.GoodsID, C.GoodsName, C.ImageName, C.CountryOfOrigin, C.StockQuantity, C.Price, A.Amount, C.Price*A.Amount AS totalPrice '
+        'FROM SHOPPINGCART AS A, ACCOUNT AS B, GOODS AS C '
+        'WHERE (A.AccountID=B.AccountID) and (A.GoodsID = C.GoodsID) and '
+        'A.AccountID = ?',
+        (user['AccountID'],)
+    ).fetchall()
+    return myShoppingCart
+
+# 取得 user 資訊
+def get_user(uid):
+    db = get_db()
+    user = db.execute(
+        'SELECT * FROM ACCOUNT AS A'
+        ' WHERE A.AccountID = ?',
+        (uid,)
     ).fetchone()
 
-    if post is None:
-        abort(404, "Post id {0} doesn't exist.".format(id))
+    if user is None:
+        abort(404, "User id {0} doesn't exist.".format(id))
 
-    return post
+    return user
 
 # register
 @bp.route('/register', methods=('GET', 'POST'))
@@ -71,6 +84,7 @@ def register():
 
     return render_template('user/register.html')
 
+# login
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
@@ -96,19 +110,81 @@ def login():
 
     return render_template('user/login.html')
 
+# 查看當前使用者的購物車
 @bp.route('/shoppingCart', methods=('GET', 'POST'))
 def shoppingcart():
     user = g.user
-    db = get_db()
-    myShoppingcart = db.execute(
-        'Select B.Account, C.GoodsID, C.GoodsName, A.Amount '
-        'FROM SHOPPINGCART AS A, ACCOUNT AS B, GOODS AS C '
-        'WHERE (A.AccountID=B.AccountID) and (A.GoodsID = C.GoodsID) and '
-        'A.AccountID = ?',
-        (user['AccountID'],)
-    ).fetchall()
-    return render_template('user/shoppingcart.html', shoppingcart=myShoppingcart)
+    myShoppingcart = getShoppingCart(user['AccountID'])
+    totalPrice = 0
+    for goods in myShoppingcart:
+        totalPrice += int(goods['totalPrice'])
+    return render_template('user/shoppingcart.html', shoppingcart=myShoppingcart, total=totalPrice)
 
+# 判斷購物車中要購買的商品是否有足夠的數量
+def IsHasEnoughStock(myShoppingcart):
+    return True
+
+# 購買購物車中所有的商品(未完成)
+@bp.route('/buyAllGoodsInShoppingCart', methods=('GET', 'POST'))
+def buyAllGoodsInShoppingCart():
+    print('購買購物車中的商品')
+    user = g.user
+    myShoppingCart=getShoppingCart(user['AccountID'])
+    totalPrice = 0
+    for goods in myShoppingCart:
+        totalPrice += int(goods['totalPrice'])
+
+    if request.method == 'POST':
+        print('post')
+        address = request.form['addresss']
+        ShippingMethodID = request.form['shippingMethod']
+        paymentID = request.form['payment']
+        discount = request.form['discount']
+        # 如果有足夠的庫存(判斷部分沒完成)
+        if (IsHasEnoughStock(myShoppingCart)):
+            print('訂購成功')
+            db = get_db()
+            # 查詢折扣是否存在
+            # 新增訂單資料（ORDERS）
+            db.execute(
+                'INSERT INTO ORDERS (AccountID, Address, ShippingMethodID, StatusID, PaymentID) '
+                'VALUES (?, ?, ?, ?, ?)', 
+                (user['AccountID'], address, ShippingMethodID, '1',paymentID,)
+            )
+
+            # 取得最新 OrderID
+            newOrder = db.execute(
+                'SELECT MAX(OrderID) AS ID FROM ORDERS'
+            ).fetchone()
+            OrderID = newOrder['ID']
+
+            
+            for goods in myShoppingCart:
+                # 新增訂單資料（SALES_ON）
+                db.execute(
+                    'INSERT INTO SALES_ON (OrderID, GoodsID, Amount) '
+                    'VALUES (?, ?, ?)', 
+                    (OrderID, goods['GoodsID'], goods['Amount'],)
+                )
+
+                # 更新商品庫存
+                originAmount = goods['StockQuantity']
+                db.execute(
+                    'UPDATE GOODS SET StockQuantity = ? WHERE GOODSID = ? ',
+                    (int(originAmount)-int(goods['Amount']), goods['GoodsID'])
+                )
+
+            # 刪除購物車的內容
+            db.execute(
+                'DELETE FROM SHOPPINGCART '
+                'WHERE AccountID = ? ',
+                (user['AccountID'],)
+            )
+
+            db.commit()
+            return redirect(url_for('goods.index'))
+    return render_template('user/buyAllGoodsInShoppingCart.html', shoppingCart=myShoppingCart, total=totalPrice)
+# 查看當前使用者的購買紀錄
 @bp.route('/buyHistory', methods=('GET','POST'))
 def buyHistory():
     user = g.user
@@ -127,7 +203,7 @@ def buyHistory():
     # ).fetchall()
     return render_template('user/buyHistory.html', history=myHistory)
 
-# 待修改
+# 取得 g.user
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
@@ -138,25 +214,11 @@ def load_logged_in_user():
             'SELECT * FROM ACCOUNT WHERE AccountID = ?', (user_id,)
         ).fetchone()
 
-# 待修改
+# 登出
 @bp.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
-
-# 未測試
-def get_user(uid):
-    db = get_db()
-    user = db.execute(
-        'SELECT * FROM ACCOUNT AS A'
-        ' WHERE A.AccountID = ?',
-        (uid,)
-    ).fetchone()
-
-    if user is None:
-        abort(404, "User id {0} doesn't exist.".format(id))
-
-    return user
 
 @bp.route('/userList', methods=('GET', 'POST'))
 def userList():
