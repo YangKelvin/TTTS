@@ -8,7 +8,7 @@ from werkzeug.exceptions import abort
 
 from TTTS.db import get_db
 
-# 待修改
+# 查看是否登入
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
@@ -22,18 +22,31 @@ def login_required(view):
 # blueprint name='user'
 bp = Blueprint('user', __name__, url_prefix='/user')
 
-def get_shoppingcart(GoodsID, check_author=True):
-    post = get_db().execute(
-        'SELECT GoodsID, GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin'
-        ' FROM GOODS'
-        ' WHERE GoodsID = ?',
-        (GoodsID,)
+# 取得某個顧客的shopping cart 中的商品內容和金額
+def getShoppingCart(AccountID, check_author=True):
+    user = g.user
+    myShoppingCart = get_db().execute(
+        'Select B.Account, C.GoodsID, C.GoodsName, C.Price, A.Amount, C.Price*A.Amount AS totalPrice '
+        'FROM SHOPPINGCART AS A, ACCOUNT AS B, GOODS AS C '
+        'WHERE (A.AccountID=B.AccountID) and (A.GoodsID = C.GoodsID) and '
+        'A.AccountID = ?',
+        (user['AccountID'],)
+    ).fetchall()
+    return myShoppingCart
+
+# 取得 user 資訊
+def get_user(uid):
+    db = get_db()
+    user = db.execute(
+        'SELECT * FROM ACCOUNT AS A'
+        ' WHERE A.AccountID = ?',
+        (uid,)
     ).fetchone()
 
-    if post is None:
-        abort(404, "Post id {0} doesn't exist.".format(id))
+    if user is None:
+        abort(404, "User id {0} doesn't exist.".format(id))
 
-    return post
+    return user
 
 # register
 @bp.route('/register', methods=('GET', 'POST'))
@@ -71,6 +84,7 @@ def register():
 
     return render_template('user/register.html')
 
+# login
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
@@ -96,19 +110,22 @@ def login():
 
     return render_template('user/login.html')
 
+# 查看當前使用者的購物車
 @bp.route('/shoppingCart', methods=('GET', 'POST'))
 def shoppingcart():
     user = g.user
-    db = get_db()
-    myShoppingcart = db.execute(
-        'Select B.Account, C.GoodsID, C.GoodsName, A.Amount '
-        'FROM SHOPPINGCART AS A, ACCOUNT AS B, GOODS AS C '
-        'WHERE (A.AccountID=B.AccountID) and (A.GoodsID = C.GoodsID) and '
-        'A.AccountID = ?',
-        (user['AccountID'],)
-    ).fetchall()
-    return render_template('user/shoppingcart.html', shoppingcart=myShoppingcart)
+    myShoppingcart = getShoppingCart(user['AccountID'])
+    totalPrice = 0
+    for goods in myShoppingcart:
+        totalPrice += int(goods['totalPrice'])
+    return render_template('user/shoppingcart.html', shoppingcart=myShoppingcart, total=totalPrice)
 
+# 購買購物車中所有的商品(未完成)
+@bp.route('/buyAllGoodsInShoppingCart', methods=('GET', 'POST'))
+def buyAllGoodsInShoppingCart():
+    user = g.user
+    
+# 查看當前使用者的購買紀錄
 @bp.route('/buyHistory', methods=('GET','POST'))
 def buyHistory():
     user = g.user
@@ -124,7 +141,7 @@ def buyHistory():
     return render_template('user/buyHistory.html', history=myHistory)
 
 
-# 待修改
+# 取得 g.user
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
@@ -135,25 +152,11 @@ def load_logged_in_user():
             'SELECT * FROM ACCOUNT WHERE AccountID = ?', (user_id,)
         ).fetchone()
 
-# 待修改
+# 登出
 @bp.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
-
-# 未測試
-def get_user(uid):
-    db = get_db()
-    user = db.execute(
-        'SELECT * FROM ACCOUNT AS A'
-        ' WHERE A.AccountID = ?',
-        (uid,)
-    ).fetchone()
-
-    if user is None:
-        abort(404, "User id {0} doesn't exist.".format(id))
-
-    return user
 
 @bp.route('/userList', methods=('GET', 'POST'))
 def userList():

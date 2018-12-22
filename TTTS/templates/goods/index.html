@@ -14,6 +14,10 @@
         <a href="{{ url_for('user.logout') }}">Log Out</a>
     {% endif %}
 
+    {% if g.user['PermissionID'] == 1%}
+        <a href="{{ url_for('user.userList') }}">帳號名單</a>
+    {% endif %}
+    
     {% if g.user['PermissionID'] == 3%}
         <a href="{{ url_for('user.shoppingcart') }}">購物車</a>
         <a href="{{ url_for('user.buyHistory') }}">購買紀錄</a>

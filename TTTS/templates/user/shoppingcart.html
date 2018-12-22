@@ -21,7 +21,9 @@
             <header>
                 <div>
                     <h1>{{ goods['GoodsName'] }}</h1>
+                    <p>單價：{{ goods['Price'] }}</p>
                     <p>數量：{{ goods['Amount']}}</p>
+                    <p>金額：{{ goods['totalPrice']}}</p>
                     <a class="action" href="{{ url_for('goods.delete_shoppingCart_goods', GoodsID=goods['GoodsID']) }}">刪除</a>
                 </div>
             </header>
@@ -30,4 +32,6 @@
             <hr>
         {% endif %}
     {% endfor %}
+    <p>總金額：{{ total }}</p>
+    <a class="action" href="{{ url_for('user.buyAllGoodsInShoppingCart') }}">購買購物車中的商品</a>
 {% endblock %}
