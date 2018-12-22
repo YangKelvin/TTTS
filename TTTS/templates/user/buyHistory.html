@@ -21,9 +21,15 @@
             <header>
                 <div>
                     <h1>訂單編號： {{ order['OrderID'] }}</h1>
-                    <p>購買商品：{{ order['GoodsName'] }}</p>
                     <p>購買時間：{{ order['Date'] }}</p>
+                    <p>購買商品：{{ order['GoodsName'] }}</p>
+                    <p>商品介紹: {{ order['Introduction'] }}</p>
+                    <p>單價: {{ order['Price'] }}</p>
+                    <p>折扣: {{ order['DiscountPercentage'] }}</p>
                     <p>數量：{{ order['Amount'] }}</p>
+                    <p>狀態: {{ order['StatusName'] }}</p>
+                    <p>運送方式: {{ order['ShippingMethodName'] }}</p>
+                    <p>地點: {{ order['Address'] }}</p>
                     <p></p>
                 </div>
             </header>
