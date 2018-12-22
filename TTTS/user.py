@@ -115,14 +115,17 @@ def buyHistory():
     print('current user id:' + str(user['AccountID']))
     db = get_db()
     myHistory = db.execute(
-        'SELECT A.OrderID, A.DATE, C.GoodsID, C.GoodsName, B.Amount '
-        'FROM ORDERS AS A, SALES_ON AS B, GOODS AS C '
-        'WHERE A.OrderID = B.OrderID and B.GoodsID=C.GoodsID and '
-        'A.AccountID=?',
+        'SELECT O.OrderID, O.DATE, O.Address, O.ShippingMethodName, O.StatusName, O.DiscountPercentage'
         (user['AccountID'],)
-    ).fetchall()
+    )
+    # myHistory = db.execute(
+    #     'SELECT A.OrderID, A.DATE, C.GoodsID, C.GoodsName, B.Amount '
+    #     'FROM ORDERS AS A, SALES_ON AS B, GOODS AS C '
+    #     'WHERE A.OrderID = B.OrderID and B.GoodsID = C.GoodsID and '
+    #     'A.AccountID=?',
+    #     (user['AccountID'],)
+    # ).fetchall()
     return render_template('user/buyHistory.html', history=myHistory)
-
 
 # 待修改
 @bp.before_app_request
