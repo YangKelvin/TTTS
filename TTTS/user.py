@@ -26,7 +26,7 @@ bp = Blueprint('user', __name__, url_prefix='/user')
 def getShoppingCart(AccountID, check_author=True):
     user = g.user
     myShoppingCart = get_db().execute(
-        'Select B.Account, C.GoodsID, C.GoodsName, C.Price, A.Amount, C.Price*A.Amount AS totalPrice '
+        'Select B.Account, C.GoodsID, C.GoodsName, C.ImageName, C.CountryOfOrigin, C.StockQuantity, C.Price, A.Amount, C.Price*A.Amount AS totalPrice '
         'FROM SHOPPINGCART AS A, ACCOUNT AS B, GOODS AS C '
         'WHERE (A.AccountID=B.AccountID) and (A.GoodsID = C.GoodsID) and '
         'A.AccountID = ?',
@@ -120,11 +120,70 @@ def shoppingcart():
         totalPrice += int(goods['totalPrice'])
     return render_template('user/shoppingcart.html', shoppingcart=myShoppingcart, total=totalPrice)
 
+# 判斷購物車中要購買的商品是否有足夠的數量
+def IsHasEnoughStock(myShoppingcart):
+    return True
+
 # 購買購物車中所有的商品(未完成)
 @bp.route('/buyAllGoodsInShoppingCart', methods=('GET', 'POST'))
 def buyAllGoodsInShoppingCart():
+    print('購買購物車中的商品')
     user = g.user
-    
+    myShoppingCart=getShoppingCart(user['AccountID'])
+    totalPrice = 0
+    for goods in myShoppingCart:
+        totalPrice += int(goods['totalPrice'])
+
+    if request.method == 'POST':
+        print('post')
+        address = request.form['addresss']
+        ShippingMethodID = request.form['shippingMethod']
+        paymentID = request.form['payment']
+        discount = request.form['discount']
+        # 如果有足夠的庫存(判斷部分沒完成)
+        if (IsHasEnoughStock(myShoppingCart)):
+            print('訂購成功')
+            db = get_db()
+            # 查詢折扣是否存在
+            # 新增訂單資料（ORDERS）
+            db.execute(
+                'INSERT INTO ORDERS (AccountID, Address, ShippingMethodID, StatusID, PaymentID) '
+                'VALUES (?, ?, ?, ?, ?)', 
+                (user['AccountID'], address, ShippingMethodID, '1',paymentID,)
+            )
+
+            # 取得最新 OrderID
+            newOrder = db.execute(
+                'SELECT MAX(OrderID) AS ID FROM ORDERS'
+            ).fetchone()
+            OrderID = newOrder['ID']
+
+            
+            for goods in myShoppingCart:
+                # 新增訂單資料（SALES_ON）
+                db.execute(
+                    'INSERT INTO SALES_ON (OrderID, GoodsID, Amount) '
+                    'VALUES (?, ?, ?)', 
+                    (OrderID, goods['GoodsID'], goods['Amount'],)
+                )
+
+                # 更新商品庫存
+                originAmount = goods['StockQuantity']
+                db.execute(
+                    'UPDATE GOODS SET StockQuantity = ? WHERE GOODSID = ? ',
+                    (int(originAmount)-int(goods['Amount']), goods['GoodsID'])
+                )
+
+            # 刪除購物車的內容
+            db.execute(
+                'DELETE FROM SHOPPINGCART '
+                'WHERE AccountID = ? ',
+                (user['AccountID'],)
+            )
+
+            db.commit()
+            return redirect(url_for('goods.index'))
+    return render_template('user/buyAllGoodsInShoppingCart.html', shoppingCart=myShoppingCart, total=totalPrice)
 # 查看當前使用者的購買紀錄
 @bp.route('/buyHistory', methods=('GET','POST'))
 def buyHistory():
