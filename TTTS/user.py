@@ -109,6 +109,21 @@ def shoppingcart():
     ).fetchall()
     return render_template('user/shoppingcart.html', shoppingcart=myShoppingcart)
 
+@bp.route('/buyHistory', methods=('GET','POST'))
+def buyHistory():
+    user = g.user
+    print('current user id:' + str(user['AccountID']))
+    db = get_db()
+    myHistory = db.execute(
+        'SELECT A.OrderID, A.DATE, C.GoodsID, C.GoodsName, B.Amount '
+        'FROM ORDERS AS A, SALES_ON AS B, GOODS AS C '
+        'WHERE A.OrderID = B.OrderID and B.GoodsID=C.GoodsID and '
+        'A.AccountID=?',
+        (user['AccountID'],)
+    ).fetchall()
+    return render_template('user/buyHistory.html', history=myHistory)
+
+
 # 待修改
 @bp.before_app_request
 def load_logged_in_user():
