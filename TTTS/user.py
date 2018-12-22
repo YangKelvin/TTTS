@@ -188,12 +188,21 @@ def buyAllGoodsInShoppingCart():
 @bp.route('/buyHistory', methods=('GET','POST'))
 def buyHistory():
     user = g.user
-    print('current user id:' + str(user['AccountID']))
+    # print('current user id:' + str(user['AccountID']))
     db = get_db()
     myHistory = db.execute(
-        'SELECT O.OrderID, O.DATE, O.Address, O.ShippingMethodName, O.StatusName, O.DiscountPercentage'
+        'SELECT S.GoodsID, S.Amount, G.GoodsName, G.GoodsType, G.Price, G.Introduction, G.ImageName, ORDER_TABLE.OrderID, ORDER_TABLE.DATE,'
+        ' ORDER_TABLE.Address, ORDER_TABLE.ShippingMethodName, ORDER_TABLE.StatusName, ORDER_TABLE.DiscountPercentage'
+        ' FROM GOODS AS G, SALES_ON AS S,'
+            ' (SELECT O.OrderID, O.DATE, O.Address, ShippingMethodName, StatusName, DiscountPercentage'
+            ' FROM ORDERS AS O'
+            ' LEFT OUTER JOIN SHIPPINGMETHOD ON SHIPPINGMETHOD.ShippingMethodID = O.ShippingMethodID'
+            ' LEFT OUTER JOIN STATUS ON STATUS.StatusID = O.StatusID'
+            ' LEFT OUTER JOIN DISCOUNT ON DISCOUNT.DiscountID = O.DiscountID'
+            ' WHERE O.AccountID LIKE ?) ORDER_TABLE'
+        ' WHERE S.OrderID = ORDER_TABLE.OrderID AND S.GoodsID = G.GoodsID',
         (user['AccountID'],)
-    )
+    ).fetchall()
     # myHistory = db.execute(
     #     'SELECT A.OrderID, A.DATE, C.GoodsID, C.GoodsName, B.Amount '
     #     'FROM ORDERS AS A, SALES_ON AS B, GOODS AS C '
