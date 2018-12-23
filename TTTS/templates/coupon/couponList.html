@@ -8,7 +8,6 @@
                 </div>
             </header>
             <a class="action" href="{{ url_for('coupon.edit', coupon_id=coupon['DiscountID']) }}">Edit</a>
-            <a class="action" href="{{ url_for('coupon.deleteCoupon', coupon_id=coupon['DiscountID']) }}">Delete</a>
             <div class="about"> 折扣碼: {{ coupon['DiscountString']}}</div>
             <div class="about"> 折扣種類: {{ coupon['DiscountTypeName'] }}</div>
             <div class="about"> 折扣: {{ coupon['DiscountPercentage'] }}</div>
