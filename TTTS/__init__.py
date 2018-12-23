@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
 def create_app(test_config=None):
@@ -91,15 +91,15 @@ def create_app(test_config=None):
         print('init GOODS')
         database.execute(
         'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        ('好好喝綠茶', '綠茶', '100', '5', '好喝的綠茶喔', 'goodGreenTea.png', '1')
+        ('好好喝綠茶', '綠茶', '100', '500', '好喝的綠茶喔', 'goodGreenTea.png', '1')
         )
         database.execute(
             'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            ('好好喝紅茶', '紅茶', '100', '5', '好喝的紅茶喔', 'goodBlackTea.png', '1')
+            ('好好喝紅茶', '紅茶', '100', '500', '好喝的紅茶喔', 'goodBlackTea.png', '1')
         )
         database.execute(
             'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            ('好好喝烏龍茶', '烏龍茶', '100', '5', '好喝的綠茶喔', 'goodGreenTea.png', '1')
+            ('好好喝烏龍茶', '烏龍茶', '100', '500', '好喝的綠茶喔', 'goodGreenTea.png', '1')
         )
 
         print('init DISCOUNTTYPE')
@@ -186,5 +186,5 @@ def create_app(test_config=None):
         database.commit()
 
 
-        return "init database"
+        return redirect(url_for('goods.index'))
     return app

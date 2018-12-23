@@ -19,6 +19,7 @@ def index():
 
 # 新增產品
 @bp.route('/addNewGoods', methods=('GET', 'POST'))
+
 # @login_required
 def addNewGoods():
     if request.method == 'POST':
@@ -92,8 +93,6 @@ def deleteGoods(id):
     functions.delete_goods(id)
     return redirect(url_for('goods.index'))
 
-# --------------------------------
-# 顧客
 # 查看商品資訊
 @bp.route('/<int:GoodsID>/viewGoods', methods=('GET', 'POST'))
 def viewGoods(GoodsID):
@@ -196,10 +195,7 @@ def addToShoppingCart(GoodsID):
     temp = '台灣'
     return render_template('goods/viewGoods.html', post=goods, temp=temp)
 
-# 購買購物車裡面的商品
-
-# 購買單個商品
-
+# 刪除購物車中的商品
 @bp.route('/<int:GoodsID>/deleteShoppingCartGoods', methods=('GET', 'POST'))
 @login_required
 def delete_shoppingCart_goods(GoodsID):
@@ -210,6 +206,6 @@ def delete_shoppingCart_goods(GoodsID):
     print('current user id:' + str(session.get('user_id')))
     # 刪除
     functions.delete_goods_from_shopping_cart(deleteGoodsID, session.get('user_id'))
-    
+
     # 待修改
     return redirect(url_for('goods.index'))

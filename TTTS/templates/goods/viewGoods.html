@@ -14,12 +14,10 @@
     <p></p>
     <label for="stockQuantity">庫存：{{ post['StockQuantity'] }}</label>
     <p></p>
-    <label for="introduction">介紹：</label>
+    <label for="introduction">介紹：{{ post['Introduction'] }}</label>
     <p></p>
-    <input name="introduction" id="introduction" value="{{ post['Introduction'] }}" >
-    <p></p>
-    <label for="imageName">圖片</label>
-    <input type="file" name="imageName" id="imageName" accept="image/*">
+    <label for="imageName">圖片：{{ post['ImageName'] }}</label>
+    <!-- <input type="file" name="imageName" id="imageName" accept="image/*"> -->
     <p></p>
     <label for="countryOfOrigin">產地：{{ temp }}</label>
     <p></p>
