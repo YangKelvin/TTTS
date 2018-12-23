@@ -7,6 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.exceptions import abort
 
 from TTTS.db import get_db
+from . import functions
 
 # 查看是否登入
 def login_required(view):
@@ -114,11 +115,11 @@ def login():
 @bp.route('/shoppingCart', methods=('GET', 'POST'))
 def shoppingcart():
     user = g.user
-    myShoppingcart = getShoppingCart(user['AccountID'])
+    myShoppingCart = functions.get_all_shopping_cart_goods(user['AccountID'])
     totalPrice = 0
-    for goods in myShoppingcart:
-        totalPrice += int(goods['totalPrice'])
-    return render_template('user/shoppingcart.html', shoppingcart=myShoppingcart, total=totalPrice)
+    for goods in myShoppingCart:
+        totalPrice += int(goods['total'])
+    return render_template('user/shoppingcart.html', shoppingcart=myShoppingCart, total=totalPrice)
 
 # 判斷購物車中要購買的商品是否有足夠的數量
 def IsHasEnoughStock(myShoppingcart):
@@ -129,61 +130,49 @@ def IsHasEnoughStock(myShoppingcart):
 def buyAllGoodsInShoppingCart():
     print('購買購物車中的商品')
     user = g.user
-    myShoppingCart=getShoppingCart(user['AccountID'])
+    myShoppingCart = functions.get_all_shopping_cart_goods(user['AccountID'])
+    # myShoppingCart=getShoppingCart(user['AccountID'])
     totalPrice = 0
     for goods in myShoppingCart:
-        totalPrice += int(goods['totalPrice'])
+        totalPrice += int(goods['total'])
 
     if request.method == 'POST':
         print('post')
         address = request.form['addresss']
         ShippingMethodID = request.form['shippingMethod']
         paymentID = request.form['payment']
-        discount = request.form['discount']
+        discountStr = request.form['discount']
         # 如果有足夠的庫存(判斷部分沒完成)
         if (IsHasEnoughStock(myShoppingCart)):
             print('訂購成功')
             db = get_db()
-            # 查詢折扣是否存在
+            # 設定折扣
+            discountPercentage = functions.get_discount(discountStr)
+            resultPrice = totalPrice * discountPercentage
+
             # 新增訂單資料（ORDERS）
-            db.execute(
-                'INSERT INTO ORDERS (AccountID, Address, ShippingMethodID, StatusID, PaymentID) '
-                'VALUES (?, ?, ?, ?, ?)', 
-                (user['AccountID'], address, ShippingMethodID, '1',paymentID,)
-            )
+            functions.add_new_order(user['AccountID'], address, ShippingMethodID, paymentID, discountPercentage, resultPrice)
 
             # 取得最新 OrderID
             newOrder = db.execute(
                 'SELECT MAX(OrderID) AS ID FROM ORDERS'
             ).fetchone()
             OrderID = newOrder['ID']
-
-            
+        
             for goods in myShoppingCart:
                 # 新增訂單資料（SALES_ON）
-                db.execute(
-                    'INSERT INTO SALES_ON (OrderID, GoodsID, Amount) '
-                    'VALUES (?, ?, ?)', 
-                    (OrderID, goods['GoodsID'], goods['Amount'],)
-                )
+                functions.add_new_sales_on(OrderID, goods['GoodsID'], goods['Amount'])
 
                 # 更新商品庫存
-                originAmount = goods['StockQuantity']
-                db.execute(
-                    'UPDATE GOODS SET StockQuantity = ? WHERE GOODSID = ? ',
-                    (int(originAmount)-int(goods['Amount']), goods['GoodsID'])
-                )
+                newAmount = goods['StockQuantity'] - goods['Amount']
+                functions.update_goods_stock_quantity(goods['GoodsID'], newAmount)
 
             # 刪除購物車的內容
-            db.execute(
-                'DELETE FROM SHOPPINGCART '
-                'WHERE AccountID = ? ',
-                (user['AccountID'],)
-            )
+            functions.delete_all_goods_from_shopping_cart(user['AccountID'])
 
-            db.commit()
             return redirect(url_for('goods.index'))
     return render_template('user/buyAllGoodsInShoppingCart.html', shoppingCart=myShoppingCart, total=totalPrice)
+
 # 查看當前使用者的購買紀錄
 @bp.route('/buyHistory', methods=('GET','POST'))
 def buyHistory():

@@ -97,3 +97,37 @@ def delete_goods_from_shopping_cart(account_id, goods_id):
     db = get_db()
     db.execute('DELETE FROM SHOPPINGCART WHERE SHOPPINGCART.GoodsID = ? AND SHOPPINGCART.AccountID = ?', (goods_id, account_id),)
     db.commit()
+
+def delete_all_goods_from_shopping_cart(account_id):
+    db = get_db()
+    db.execute(
+        'DELETE FROM SHOPPINGCART WHERE SHOPPINGCART.AccountID = ?', 
+        (account_id,),
+        )
+    db.commit()
+
+def get_all_shopping_cart_goods(account_id):
+    db = get_db()
+    my_shopping_cart = db.execute(
+        'SELECT B.Account, B.UserNAme, C.GoodsID, C.GoodsName, C.StockQuantity, C.Price, A.Amount, C.Price * A.Amount AS total '
+        'FROM SHOPPINGCART AS A, ACCOUNT AS B, GOODS AS C '
+        'WHERE A.AccountID = B.AccountID and '
+        'A.GoodsID = C.GoodsID and '
+        'A.AccountID = ?',
+        (account_id,)
+    ).fetchall()
+    return my_shopping_cart
+
+def get_discount(discount_str):
+    db = get_db()
+    discount = db.execute(
+        'SELECT A.DiscountID, A.DiscountName, B.DiscountTypeName, A.DiscountString, DiscountPercentage '
+        'FROM DISCOUNT AS A, DISCOUNTTYPE AS B '
+        'WHERE A.DiscountTypeID = B.DiscountTypeID and '
+        'A.DiscountString = ?',
+        (discount_str,)
+    ).fetchone()
+    
+    if discount is None:
+        return 1
+    return discount['DiscountPercentage']
