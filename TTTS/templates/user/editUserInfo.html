@@ -5,10 +5,10 @@
   <form method="post">
     <label for="username">Username</label>
     <input name="username" id="username" value="{{ request.form['UserName'] or user['UserName'] }}" required>
-    <label for="account">Account</label>
-    <input name="account" id="account" value="{{ request.form['Account'] or user['Account'] }}" required>
     <label for="password">Password</label>
     <input type="password" name="password" id="password" required>
+    <label for="confirmPassword">Confirm Password</label>
+    <input type="password" name="confirmPassword" id="confirmPassword" required>
     <label for="permission">Permission</label>
     <input type="permission" name="permission" id="permission" value="{{ request.form['PermissionID'] or user['PermissionID'] }}" required>
     <label for="identification">Identification Number</label>
