@@ -116,7 +116,7 @@ def create_app(test_config=None):
         ) 
         database.execute(
             'INSERT INTO DISCOUNTTYPE (DiscountTypeName) VALUES(?)',
-            ('Student',)
+            ('Special event',)
         )
 
         print('init DISCOUNT')  
