@@ -120,10 +120,6 @@ def shoppingcart():
         totalPrice += int(goods['totalPrice'])
     return render_template('user/shoppingcart.html', shoppingcart=myShoppingcart, total=totalPrice)
 
-# 判斷購物車中要購買的商品是否有足夠的數量
-def IsHasEnoughStock(myShoppingcart):
-    return True
-
 # 購買購物車中所有的商品(未完成)
 @bp.route('/buyAllGoodsInShoppingCart', methods=('GET', 'POST'))
 def buyAllGoodsInShoppingCart():
@@ -140,50 +136,49 @@ def buyAllGoodsInShoppingCart():
         ShippingMethodID = request.form['shippingMethod']
         paymentID = request.form['payment']
         discount = request.form['discount']
-        # 如果有足夠的庫存(判斷部分沒完成)
-        if (IsHasEnoughStock(myShoppingCart)):
-            print('訂購成功')
-            db = get_db()
-            # 查詢折扣是否存在
-            # 新增訂單資料（ORDERS）
+        
+        db = get_db()
+        # 查詢折扣是否存在
+        # 新增訂單資料（ORDERS）
+        db.execute(
+            'INSERT INTO ORDERS (AccountID, Address, ShippingMethodID, StatusID, PaymentID) '
+            'VALUES (?, ?, ?, ?, ?)', 
+            (user['AccountID'], address, ShippingMethodID, '1',paymentID,)
+        )
+
+        # 取得最新 OrderID
+        newOrder = db.execute(
+            'SELECT MAX(OrderID) AS ID FROM ORDERS'
+        ).fetchone()
+        OrderID = newOrder['ID']
+
+        
+        for goods in myShoppingCart:
+            # 新增訂單資料（SALES_ON）
             db.execute(
-                'INSERT INTO ORDERS (AccountID, Address, ShippingMethodID, StatusID, PaymentID) '
-                'VALUES (?, ?, ?, ?, ?)', 
-                (user['AccountID'], address, ShippingMethodID, '1',paymentID,)
+                'INSERT INTO SALES_ON (OrderID, GoodsID, Amount) '
+                'VALUES (?, ?, ?)', 
+                (OrderID, goods['GoodsID'], goods['Amount'],)
             )
 
-            # 取得最新 OrderID
-            newOrder = db.execute(
-                'SELECT MAX(OrderID) AS ID FROM ORDERS'
-            ).fetchone()
-            OrderID = newOrder['ID']
+        # 更新商品庫存
+        originAmount = goods['StockQuantity']
+        db.execute(
+            'UPDATE GOODS SET StockQuantity = ? WHERE GOODSID = ? ',
+            (int(originAmount)-int(goods['Amount']), goods['GoodsID'])
+        )
 
-            
-            for goods in myShoppingCart:
-                # 新增訂單資料（SALES_ON）
-                db.execute(
-                    'INSERT INTO SALES_ON (OrderID, GoodsID, Amount) '
-                    'VALUES (?, ?, ?)', 
-                    (OrderID, goods['GoodsID'], goods['Amount'],)
-                )
+        # 刪除購物車的內容
+        db.execute(
+            'DELETE FROM SHOPPINGCART '
+            'WHERE AccountID = ? ',
+            (user['AccountID'],)
+        )
 
-                # 更新商品庫存
-                originAmount = goods['StockQuantity']
-                db.execute(
-                    'UPDATE GOODS SET StockQuantity = ? WHERE GOODSID = ? ',
-                    (int(originAmount)-int(goods['Amount']), goods['GoodsID'])
-                )
-
-            # 刪除購物車的內容
-            db.execute(
-                'DELETE FROM SHOPPINGCART '
-                'WHERE AccountID = ? ',
-                (user['AccountID'],)
-            )
-
-            db.commit()
-            return redirect(url_for('goods.index'))
+        db.commit()
+        return redirect(url_for('goods.index'))
     return render_template('user/buyAllGoodsInShoppingCart.html', shoppingCart=myShoppingCart, total=totalPrice)
+
 # 查看當前使用者的購買紀錄
 @bp.route('/buyHistory', methods=('GET','POST'))
 def buyHistory():
@@ -243,8 +238,9 @@ def edit(user_id):
     if request.method == 'POST':
         error = None
         db = get_db()
-        account = request.form['account']
+        
         password = request.form['password']
+        confirmPassword = request.form['confirmPassword']
         permission = request.form['permission']
         name = request.form['username']
         identificationNumber = request.form['identification']
@@ -252,22 +248,22 @@ def edit(user_id):
         cellphone = request.form['cellphone']
         email = request.form['email']
 
-        if account is None:
-            error = 'Account is required.'
-        elif password is None:
+        if password is None:
             error = 'Password is required.'
+        elif confirmPassword is None:
+            error = 'Confirm Password is required.'
         elif (not permission.isdigit()) or (int(permission) not in [1, 2, 3]):
             error = 'Permission error.'
-        elif db.execute(
-            'SELECT AccountID FROM ACCOUNT WHERE Account = ?', (account,)
-        ).fetchone()['AccountID'] is not user['AccountID']:
-            error = 'Account {} is already registered.'.format(account)
+        elif len(cellphone) != 10 or (not cellphone.isdigit()):
+            error = 'cellphone error.'
+        elif password != confirmPassword:
+            error = 'Confirm Password error.'
 
         if error is None:
-            db.execute('UPDATE ACCOUNT SET Account = ?, Password = ?, PermissionID = ?, UserName = ?, IdentificationNumber = ?,'
+            db.execute('UPDATE ACCOUNT SET Password = ?, PermissionID = ?, UserName = ?, IdentificationNumber = ?,'
             ' Gender = ?, CellphoneNumber = ?, Email = ?'
             ' WHERE AccountID = ?', 
-            (account, generate_password_hash(password), permission, name, identificationNumber, gender, cellphone, email, user_id))
+            (generate_password_hash(password), permission, name, identificationNumber, gender, cellphone, email, user_id))
             db.commit()
             # 待修改
             return redirect(url_for('user.userList'))
