@@ -98,7 +98,6 @@ CREATE TABLE DISCOUNT (
     DiscountString VARCHAR(255),
     DiscountTypeID INTEGER,
     DiscountPercentage FLOAT,
-    Date DATETIME,
     FOREIGN KEY(DiscountTypeID) REFERENCES DISCOUNTTYPE(DiscountTypeID)
 );
 
