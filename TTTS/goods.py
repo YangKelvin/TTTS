@@ -187,6 +187,7 @@ def buyGoods(GoodsID):
         paymentID = request.form['payment']
         discount = request.form['discount']
         orderAmount = request.form['orderAmount']
+
         print('--------訂購資訊--------')
         print('address:' + address)
         print('shipping method id:' + ShippingMethodID)
@@ -198,12 +199,20 @@ def buyGoods(GoodsID):
         if (int(orderAmount) <= int(buyGoods['StockQuantity'])):
             print('訂購成功')
             db = get_db()
+
+            # 查詢折扣是否存在
+            goodsDiscount = db.execute(
+                'SELECT DiscountID, DiscountName, DiscountString, DiscountPercentage, DiscountTypeID FROM DISCOUNT WHERE DiscountString = ?',
+                ('shipping1',)
+            ).fetchone()
+            print(goodsDiscount['DiscountName'])
+
             # 查詢折扣是否存在
             # 新增訂單資料（ORDERS）
             db.execute(
-                'INSERT INTO ORDERS (AccountID, Address, ShippingMethodID, StatusID, PaymentID) '
-                'VALUES (?, ?, ?, ?, ?)', 
-                (session.get('user_id'), address, ShippingMethodID, '1',paymentID,)
+                'INSERT INTO ORDERS (AccountID, Address, ShippingMethodID, StatusID, PaymentID, DiscountID) '
+                'VALUES (?, ?, ?, ?, ?, ?)', 
+                (session.get('user_id'), address, ShippingMethodID, '1',paymentID, goodsDiscount['DiscountID'])
             )
 
             # 取得最新 OrderID

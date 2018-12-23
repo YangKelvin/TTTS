@@ -190,26 +190,32 @@ def buyHistory():
     user = g.user
     # print('current user id:' + str(user['AccountID']))
     db = get_db()
-    myHistory = db.execute(
-        'SELECT S.GoodsID, S.Amount, G.GoodsName, G.GoodsType, G.Price, G.Introduction, G.ImageName, ORDER_TABLE.OrderID, ORDER_TABLE.DATE,'
-        ' ORDER_TABLE.Address, ORDER_TABLE.ShippingMethodName, ORDER_TABLE.StatusName, ORDER_TABLE.DiscountPercentage'
-        ' FROM GOODS AS G, SALES_ON AS S,'
-            ' (SELECT O.OrderID, O.DATE, O.Address, ShippingMethodName, StatusName, DiscountPercentage'
-            ' FROM ORDERS AS O'
-            ' LEFT OUTER JOIN SHIPPINGMETHOD ON SHIPPINGMETHOD.ShippingMethodID = O.ShippingMethodID'
-            ' LEFT OUTER JOIN STATUS ON STATUS.StatusID = O.StatusID'
-            ' LEFT OUTER JOIN DISCOUNT ON DISCOUNT.DiscountID = O.DiscountID'
-            ' WHERE O.AccountID LIKE ?) ORDER_TABLE'
-        ' WHERE S.OrderID = ORDER_TABLE.OrderID AND S.GoodsID = G.GoodsID',
-        (user['AccountID'],)
-    ).fetchall()
     # myHistory = db.execute(
-    #     'SELECT A.OrderID, A.DATE, C.GoodsID, C.GoodsName, B.Amount '
-    #     'FROM ORDERS AS A, SALES_ON AS B, GOODS AS C '
-    #     'WHERE A.OrderID = B.OrderID and B.GoodsID = C.GoodsID and '
-    #     'A.AccountID=?',
+    #     'SELECT S.GoodsID, S.Amount, G.GoodsName, G.GoodsType, G.Price, G.Introduction, G.ImageName, ORDER_TABLE.OrderID, ORDER_TABLE.DATE,'
+    #     ' ORDER_TABLE.Address, ORDER_TABLE.ShippingMethodName, ORDER_TABLE.StatusName, ORDER_TABLE.DiscountPercentage'
+    #     ' FROM GOODS AS G, SALES_ON AS S,'
+    #         ' (SELECT O.OrderID, O.DATE, O.Address, ShippingMethodName, StatusName, DiscountPercentage'
+    #         ' FROM ORDERS AS O'
+    #         ' LEFT OUTER JOIN SHIPPINGMETHOD ON SHIPPINGMETHOD.ShippingMethodID = O.ShippingMethodID'
+    #         ' LEFT OUTER JOIN STATUS ON STATUS.StatusID = O.StatusID'
+    #         ' LEFT OUTER JOIN DISCOUNT ON DISCOUNT.DiscountID = O.DiscountID'
+    #         ' WHERE O.AccountID LIKE ?) ORDER_TABLE'
+    #     ' WHERE S.OrderID = ORDER_TABLE.OrderID AND S.GoodsID = G.GoodsID',
     #     (user['AccountID'],)
     # ).fetchall()
+    myHistory = db.execute(
+        'SELECT A.OrderID, A.DATE, C.GoodsID, C.GoodsName, C.GoodsType, C.Price, C.Introduction, C.ImageName, B.Amount, D.DiscountPercentage, E.PaymentName, F.ShippingMethodName, A.Address, G.StatusName '
+        'FROM ORDERS AS A, SALES_ON AS B, GOODS AS C, DISCOUNT AS D, PAYMENT AS E, SHIPPINGMETHOD AS F, STATUS AS G '
+        'WHERE A.OrderID = B.OrderID and '
+        'B.GoodsID = C.GoodsID and '
+        'A.AccountID=3 and '
+        'A.PaymentID = E.PaymentID and '
+        'A.ShippingMethodID = F.ShippingMethodID and '
+        'A.DiscountID = D.DiscountID and '
+        'A.StatusID = G.StatusID and '
+        'A.AccountID=?',
+        (user['AccountID'],)
+    ).fetchall()
     return render_template('user/buyHistory.html', history=myHistory)
 
 # 取得 g.user
