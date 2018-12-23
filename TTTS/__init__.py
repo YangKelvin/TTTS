@@ -112,11 +112,11 @@ def create_app(test_config=None):
         )  
         database.execute(
             'INSERT INTO DISCOUNTTYPE (DiscountTypeName) VALUES(?)',
-            ('Shipping',)
+            ('Season',)
         ) 
         database.execute(
             'INSERT INTO DISCOUNTTYPE (DiscountTypeName) VALUES(?)',
-            ('Shipping',)
+            ('Student',)
         )
 
         print('init DISCOUNT')  
