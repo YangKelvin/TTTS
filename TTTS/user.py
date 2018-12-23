@@ -332,17 +332,10 @@ def create():
 
 @bp.route('/<int:user_id>/deleteAccount', methods=('GET', 'POST'))
 def deleteAccount(user_id):
-    user = get_user(user_id)
-
-    if request.method == 'POST':
-        db = get_db()
-
-        db.execute(
-            'DELETE FROM ACCOUNT WHERE ACCOUNT.AccountID = ?',
-            (user_id,)
-        )
-        db.commit()
-
-        return redirect(url_for('user.userList'))
-    
-    return render_template('user/editUserInfo.html', user=user)
+    db = get_db()
+    db.execute(
+        'DELETE FROM ACCOUNT WHERE ACCOUNT.AccountID = ?',
+        (user_id,)
+    )
+    db.commit()
+    return redirect(url_for('user.userList'))
