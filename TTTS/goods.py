@@ -145,11 +145,15 @@ def buyGoods(GoodsID):
 
             # 查詢折扣是否存在
             goodsDiscount = functions.check_discount(discount)
-
-            print(goodsDiscount['DiscountName'])
+            discount = 1
+            if goodsDiscount is None:
+                discount = 1
+            else:
+                discount = goodsDiscount['DiscountPercentage']
+            print(goodsDiscount['DiscountPercentage'])
 
             # 新增訂單資料（ORDERS）
-            totalPrice=int(orderAmount) * int(buyGoods['Price'])
+            totalPrice=int(orderAmount) * int(buyGoods['Price'] * discount) 
             functions.add_new_order(session.get('user_id'), address, ShippingMethodID, paymentID, goodsDiscount['DiscountID'], totalPrice)
 
             # 取得最新 OrderID

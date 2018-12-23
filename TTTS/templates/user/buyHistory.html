@@ -16,18 +16,23 @@
 {% endblock %}
 
 {% block content %}
-    {% for order in history %}
+    {% for order in orders %}
         <article class="post">
             <header>
                 <div>
                     <h1>訂單編號： {{ order['OrderID'] }}</h1>
                     <p>購買時間：{{ order['Date'] }}</p>
-                    <p>購買商品：{{ order['GoodsName'] }}</p>
-                    <p>商品介紹: {{ order['Introduction'] }}</p>
-                    <p>單價: {{ order['Price'] }}</p>
-                    <p>折扣: {{ order['DiscountPercentage'] }}</p>
-                    <p>數量：{{ order['Amount'] }}</p>
+                    {% for goods in myHistory%}
+                        {% if order['OrderID'] == goods['OrderID'] %}
+                            <p>購買商品：{{ goods['GoodsName'] }}</p>
+                            <p>商品介紹: {{ goods['Introduction'] }}</p>
+                            <p>單價: {{ goods['Price'] }}</p>
+                            <p>數量：{{ goods['Amount'] }}</p>
+                        {% endif %}
+                    {% endfor %}
                     <p>狀態: {{ order['StatusName'] }}</p>
+                    <p>折扣名稱: {{ order['DiscountName'] }}</p>
+                    <p>折扣: {{ order['DiscountPercentage'] }}</p>
                     <p>運送方式: {{ order['ShippingMethodName'] }}</p>
                     <p>地點: {{ order['Address'] }}</p>
                     <p>總金額: {{ order['TotalPrice'] }}</p>

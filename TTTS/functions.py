@@ -128,6 +128,45 @@ def get_discount(discount_str):
         (discount_str,)
     ).fetchone()
     
-    if discount is None:
-        return 1
-    return discount['DiscountPercentage']
+    return discount
+
+def get_orders(account_id):
+    db = get_db()
+    orders = db.execute(
+        'SELECT A.OrderID, A.Date, A.Address, B.ShippingMethodName, C.StatusName, D.PaymentName, A.TotalPrice, E.DiscountName, E.DiscountPercentage '
+        'FROM ORDERS AS A, SHIPPINGMETHOD AS B, STATUS AS C, PAYMENT AS D, DISCOUNT AS E '
+        'WHERE A.ShippingMethodID = B.ShippingMethodID and '
+        'A.StatusID = C.StatusID and '
+        'A.PaymentID = D.PaymentID and '
+        'A.DiscountID = E.DiscountID and '
+        'A.AccountID = ?',
+        (account_id,)
+    ).fetchall()
+    return orders
+
+def get_user_buy_history(account_id):
+    db = get_db()
+    my_order_history = db.execute(
+        'SELECT A.OrderID, A.Date, B.GoodsName, B.Price, B.Introduction, C.Amount, B.Price * C.Amount AS total1, A.TotalPrice, A.DiscountID '
+        'FROM ORDERS AS A, GOODS AS B, SALES_ON AS C, Discount AS D '
+        'WHERE A.OrderID = C.OrderID and '
+        'C.GoodsID = B.GoodsID and '
+        'A.DiscountID = D.DiscountID and '
+        'A.AccountID = ?',
+        (account_id,)
+    ).fetchall()
+    return my_order_history
+
+#not use
+def get_user_buy_history_in_order(account_id, current_order_id):
+    db = get_db()
+    my_order_history = db.execute(
+        'SELECT A.OrderID, A.Date, B.GoodsName, B.Price, C.Amount, B.Price * C.Amount AS total1, A.TotalPrice, A.DiscountID '
+        'FROM ORDERS AS A, GOODS AS B, SALES_ON AS C, Discount AS D '
+        'WHERE A.OrderID = C.OrderID and '
+        'C.GoodsID = B.GoodsID and '
+        'A.DicountID = C.DiscountID and '
+        'A.AccountID = ? and A.OrderID = ?',
+        (account_id, current_order_id,)
+    ).fetchall()
+    return my_order_history
