@@ -30,6 +30,7 @@
                     <p>狀態: {{ order['StatusName'] }}</p>
                     <p>運送方式: {{ order['ShippingMethodName'] }}</p>
                     <p>地點: {{ order['Address'] }}</p>
+                    <p>總金額: {{ order['TotalPrice'] }}</p>
                     <p></p>
                 </div>
             </header>
@@ -38,4 +39,5 @@
             <hr>
         {% endif %}
     {% endfor %}
+    
 {% endblock %}

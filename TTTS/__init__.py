@@ -136,6 +136,56 @@ def create_app(test_config=None):
             'INSERT INTO DISCOUNT (DiscountName, DiscountString, DiscountTypeID, DiscountPercentage) VALUES(?, ?, ?, ?)',
             ('special discount 1', 'special', 3, 0.6)
         )
+
+        print ('init SHIPPINGMETHOD')
+        database.execute(
+            'INSERT INTO SHIPPINGMETHOD (ShippingMethodName) VALUES(?)',
+            ('超商取貨',)
+        )
+        database.execute(
+            'INSERT INTO SHIPPINGMETHOD (ShippingMethodName) VALUES(?)',
+            ('宅配到府',)
+        )
+
+        print ('init PAYMENT')
+        database.execute(
+            'INSERT INTO PAYMENT (PaymentName) VALUES(?)',
+            ('現金',)
+        )
+        database.execute(
+            'INSERT INTO PAYMENT (PaymentName) VALUES(?)',
+            ('信用卡',)
+        )
+
+        print ('init STATUS')
+        database.execute(
+            'INSERT INTO STATUS (StatusName) VALUES(?)',
+            ('Process',)
+        )
+        database.execute(
+            'INSERT INTO STATUS (StatusName) VALUES(?)',
+            ('Transportation',)
+        )
+        database.execute(
+            'INSERT INTO STATUS (StatusName) VALUES(?)',
+            ('Arrival',)
+        )
+        database.execute(
+            'INSERT INTO STATUS (StatusName) VALUES(?)',
+            ('Carry out',)
+        )
+        database.execute(
+            'INSERT INTO STATUS (StatusName) VALUES(?)',
+            ('Fail',)
+        )
+        database.execute(
+            'INSERT INTO STATUS (StatusName) VALUES(?)',
+            ('Apply',)
+        )
+        database.execute(
+            'INSERT INTO STATUS (StatusName) VALUES(?)',
+            ('Cancel',)
+        )
         database.commit()
 
 

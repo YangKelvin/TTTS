@@ -12,6 +12,7 @@
     <p>商品庫存： {{ goods['StockQuantity'] }}</p>
     <p>商品圖片名稱： {{ goods['ImageName'] }}</p>
     <p>商品產地編號： {{ goods['CountryofOrigin'] }}</p>
+
     <label for="address">address</label>
     <input name="addresss" id="addresss" required>
     <p></p>
@@ -33,5 +34,6 @@
     <label for="orderAmount">購買數量：</label>
     <input name="orderAmount" id="orderAmount" value="{{ request.form['orderAmount'] }}" required>
     <p></p>
+    
     <input type="submit" value="確定購買">
 </form>
