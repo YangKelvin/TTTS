@@ -204,7 +204,7 @@ def buyHistory():
     #     (user['AccountID'],)
     # ).fetchall()
     myHistory = db.execute(
-        'SELECT A.OrderID, A.DATE, C.GoodsID, C.GoodsName, C.GoodsType, C.Price, C.Introduction, C.ImageName, B.Amount, D.DiscountPercentage, E.PaymentName, F.ShippingMethodName, A.Address, G.StatusName '
+        'SELECT A.OrderID, A.DATE, C.GoodsID, C.GoodsName, C.GoodsType, C.Price, C.Introduction, C.ImageName, B.Amount, D.DiscountPercentage, E.PaymentName, F.ShippingMethodName, A.Address, G.StatusName, A.TotalPrice '
         'FROM ORDERS AS A, SALES_ON AS B, GOODS AS C, DISCOUNT AS D, PAYMENT AS E, SHIPPINGMETHOD AS F, STATUS AS G '
         'WHERE A.OrderID = B.OrderID and '
         'B.GoodsID = C.GoodsID and '
@@ -216,6 +216,14 @@ def buyHistory():
         'A.AccountID=?',
         (user['AccountID'],)
     ).fetchall()
+    
+    # mySalesOn = db.execute(
+    #     'SELECT B.GoodsName, B.Price, A.Amount, B.Price*A.Amount AS total '
+    #     'FROM SALES_ON AS A, GOODS AS B '
+    #     'WHERE A.GoodsID=B.GoodsID and '
+    #     'A.OrderID=?'
+    # ).fetchall()
+
     return render_template('user/buyHistory.html', history=myHistory)
 
 # 取得 g.user

@@ -209,10 +209,11 @@ def buyGoods(GoodsID):
 
             # 查詢折扣是否存在
             # 新增訂單資料（ORDERS）
+            totalPrice=int(orderAmount) * int(buyGoods['Price'])
             db.execute(
-                'INSERT INTO ORDERS (AccountID, Address, ShippingMethodID, StatusID, PaymentID, DiscountID) '
-                'VALUES (?, ?, ?, ?, ?, ?)', 
-                (session.get('user_id'), address, ShippingMethodID, '1',paymentID, goodsDiscount['DiscountID'])
+                'INSERT INTO ORDERS (AccountID, Address, ShippingMethodID, StatusID, PaymentID, DiscountID, TotalPrice) '
+                'VALUES (?, ?, ?, ?, ?, ?, ?)', 
+                (session.get('user_id'), address, ShippingMethodID, '1',paymentID, goodsDiscount['DiscountID'], totalPrice,)
             )
 
             # 取得最新 OrderID
