@@ -33,6 +33,9 @@ def create_app(test_config=None):
     from . import search
     app.register_blueprint(search.bp)
 
+    from . import coupon
+    app.register_blueprint(coupon.bp)
+
     from . import goods
     app.register_blueprint(goods.bp)
     app.add_url_rule('/goods', endpoint='index')
