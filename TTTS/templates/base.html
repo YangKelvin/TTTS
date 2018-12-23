@@ -1,24 +1,37 @@
 <!doctype html>
-<title>{% block title %}{% endblock %} - Flaskr</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<nav>
-  <h1>Flaskr</h1>
-  <ul>
-    {% if g.user %}
-      <li><span>{{ g.user['username'] }}</span>
-      <li><a href="{{ url_for('user.logout') }}">Log Out</a>
-    {% else %}
-      <li><a href="{{ url_for('user.register') }}">Register</a>
-      <li><a href="{{ url_for('user.login') }}">Log In</a>
-    {% endif %}
-  </ul>
-</nav>
-<section class="content">
-  <header>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>台北科技茗茶 - {% block title %}{% endblock %}</title>
+    
+    <link rel="Shortcut Icon" type="image/x-icon" href="{{ url_for('static', filename='image/favicon.ico') }}"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    {% block stylesheet %}{% endblock %}
+</head>
+
+<body>
+    <!-- 確認使用者是否有登入 -->
+    <!-- <nav>
+    <ul>
+        {% if g.user %}
+        <h1>會員已登入</h1>
+        <li><span>{{ g.user['username'] }}</span>
+        <li><a href="{{ url_for('user.logout') }}">Log Out</a>
+        {% else %}
+        <h1>尚未登入</h1>
+        <li><a href="{{ url_for('user.register') }}">Register</a>
+        <li><a href="{{ url_for('user.login') }}">Log In</a>
+        {% endif %}
+    </ul>
+    </nav> -->
     {% block header %}{% endblock %}
-  </header>
-  {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
-  {% endfor %}
-  {% block content %}{% endblock %}
-</section>
+    {% for message in get_flashed_messages() %}
+        <div class="flash">{{ message }}</div>
+    {% endfor %}
+    {% block content %}{% endblock %} 
+    {% block footer %}{% endblock %}
+    {% block scripts %}{% endblock %}
+</body>
+</html>

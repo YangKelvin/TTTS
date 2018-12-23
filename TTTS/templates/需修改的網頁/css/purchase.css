@@ -1,0 +1,31 @@
+* {
+    font-family: "Noto Sans CJK TC Regular", "微軟正黑體", sans-serif;
+}
+
+a {
+    text-decoration: none;
+    white-space:nowrap;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.bg-color-gray {
+    background-color: rgba(172, 93, 40, 0.5);
+}
+
+.font-color-white {
+    color: rgb(0, 0, 0);
+}
+
+.heigh-200 {
+    height: 200px;
+}
+
+.btn-default{
+    color: #444444;
+    border-radius: 0;
+    background-color: #E2E2E2;
+    border-color: #8E8E8E;
+}
