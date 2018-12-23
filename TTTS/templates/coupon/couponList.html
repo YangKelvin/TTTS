@@ -1,0 +1,19 @@
+{% block content %}
+    <a class="action" href="{{ url_for('coupon.addNewCoupon') }}">Add New Coupon</a>
+    {% for coupon in coupons %}
+        <article class="post">
+            <header>
+                <div>
+                    <h1>{{ coupon['DiscountName'] }}</h1>
+                </div>
+            </header>
+            <a class="action" href="{{ url_for('coupon.edit', coupon_id=coupon['DiscountID']) }}">Edit</a>
+            <div class="about"> 折扣碼: {{ coupon['DiscountString']}}</div>
+            <div class="about"> 折扣種類: {{ coupon['DiscountTypeName'] }}</div>
+            <div class="about"> 折扣: {{ coupon['DiscountPercentage'] }}</div>
+        </article>
+        {% if not loop.last %}
+            <hr>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

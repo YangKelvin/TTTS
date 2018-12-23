@@ -1,0 +1,17 @@
+{% block content %}
+  <form method="post">
+    <label for="shippingMethod">折扣種類：</label>
+    <select name="discountType" id="discountType">
+        <option value="1">Shipping</option>
+        <option value="2">Season</option>
+        <option value="3">Special event</option>
+    </select>
+    <label for="discountName">discountName</label>
+    <input name="discountName" id="discountName" required>
+    <label for="discountString">discountString</label>
+    <input name="discountString" id="discountString" required>
+    <label for="discountPercentage">discountPercentage</label>
+    <input name="discountPercentage" id="discountPercentage" required>
+    <input type="submit" value="Add">    
+  </form>
+{% endblock %}

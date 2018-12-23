@@ -1,0 +1,20 @@
+{% block content %}
+  <form method="post">
+    <label for="shippingMethod">折扣種類：</label>
+    <select name="discountType" id="discountType">
+        <option value="1">Shipping</option>
+        <option value="2">Season</option>
+        <option value="3">Special event</option>
+    </select>
+    <label for="discountName">discountName</label>
+    <input name="discountName" id="discountName" value="{{ request.form['DiscountName'] or coupon['DiscountName'] }}" required>
+    <label for="discountString">discountString</label>
+    <input name="discountString" id="discountString" value="{{ request.form['DiscountString'] or coupon['DiscountString'] }}" required>
+    <label for="discountPercentage">discountPercentage</label>
+    <input name="discountPercentage" id="discountPercentage" value="{{ request.form['DiscountPercentage'] or coupon['DiscountPercentage'] }}" required>
+    <input type="submit" value="Edit">    
+  </form>
+  <form method="post" action="{{ url_for('coupon.deleteCoupon', coupon_id=coupon['DiscountID']) }}">
+    <input type="submit" value="Delete">
+  </form>
+{% endblock %}

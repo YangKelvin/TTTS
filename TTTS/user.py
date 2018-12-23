@@ -121,10 +121,6 @@ def shoppingcart():
         totalPrice += int(goods['total'])
     return render_template('user/shoppingcart.html', shoppingcart=myShoppingCart, total=totalPrice)
 
-# 判斷購物車中要購買的商品是否有足夠的數量
-def IsHasEnoughStock(myShoppingcart):
-    return True
-
 # 購買購物車中所有的商品(未完成)
 @bp.route('/buyAllGoodsInShoppingCart', methods=('GET', 'POST'))
 def buyAllGoodsInShoppingCart():
@@ -246,8 +242,9 @@ def edit(user_id):
     if request.method == 'POST':
         error = None
         db = get_db()
-        account = request.form['account']
+        
         password = request.form['password']
+        confirmPassword = request.form['confirmPassword']
         permission = request.form['permission']
         name = request.form['username']
         identificationNumber = request.form['identification']
@@ -255,22 +252,22 @@ def edit(user_id):
         cellphone = request.form['cellphone']
         email = request.form['email']
 
-        if account is None:
-            error = 'Account is required.'
-        elif password is None:
+        if password is None:
             error = 'Password is required.'
+        elif confirmPassword is None:
+            error = 'Confirm Password is required.'
         elif (not permission.isdigit()) or (int(permission) not in [1, 2, 3]):
             error = 'Permission error.'
-        elif db.execute(
-            'SELECT AccountID FROM ACCOUNT WHERE Account = ?', (account,)
-        ).fetchone()['AccountID'] is not user['AccountID']:
-            error = 'Account {} is already registered.'.format(account)
+        elif len(cellphone) != 10 or (not cellphone.isdigit()):
+            error = 'cellphone error.'
+        elif password != confirmPassword:
+            error = 'Confirm Password error.'
 
         if error is None:
-            db.execute('UPDATE ACCOUNT SET Account = ?, Password = ?, PermissionID = ?, UserName = ?, IdentificationNumber = ?,'
+            db.execute('UPDATE ACCOUNT SET Password = ?, PermissionID = ?, UserName = ?, IdentificationNumber = ?,'
             ' Gender = ?, CellphoneNumber = ?, Email = ?'
             ' WHERE AccountID = ?', 
-            (account, generate_password_hash(password), permission, name, identificationNumber, gender, cellphone, email, user_id))
+            (generate_password_hash(password), permission, name, identificationNumber, gender, cellphone, email, user_id))
             db.commit()
             # 待修改
             return redirect(url_for('user.userList'))
@@ -325,17 +322,10 @@ def create():
 
 @bp.route('/<int:user_id>/deleteAccount', methods=('GET', 'POST'))
 def deleteAccount(user_id):
-    user = get_user(user_id)
-
-    if request.method == 'POST':
-        db = get_db()
-
-        db.execute(
-            'DELETE FROM ACCOUNT WHERE ACCOUNT.AccountID = ?',
-            (user_id,)
-        )
-        db.commit()
-
-        return redirect(url_for('user.userList'))
-    
-    return render_template('user/editUserInfo.html', user=user)
+    db = get_db()
+    db.execute(
+        'DELETE FROM ACCOUNT WHERE ACCOUNT.AccountID = ?',
+        (user_id,)
+    )
+    db.commit()
+    return redirect(url_for('user.userList'))
