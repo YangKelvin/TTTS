@@ -157,6 +157,15 @@ def get_user_buy_history(account_id):
     ).fetchall()
     return my_order_history
 
+def get_user_information(account_id):
+    db = get_db()
+    userInformation = db.execute(
+        'SELECT Account, UserName, CellphoneNumber, Gender, Email, PermissionName FROM ACCOUNT, PERMISSION'
+        ' WHERE ACCOUNT.AccountID = ? AND PERMISSION.PermissionID = ACCOUNT.PermissionID',
+        (account_id,)
+    ).fetchone()
+    return userInformation
+
 #not use
 def get_user_buy_history_in_order(account_id, current_order_id):
     db = get_db()
