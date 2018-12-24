@@ -15,7 +15,10 @@ bp = Blueprint('goods', __name__, url_prefix='/goods')
 @bp.route('/')
 def index():
     posts = functions.get_all_goods()
-    return render_template('goods/index.html', posts=posts)
+    user = None
+    if g.user is not None:
+        user = functions.get_user_information(g.user['AccountID'])
+    return render_template('goods/index.html', posts=posts, user=user)
 
 # 新增產品
 @bp.route('/addNewGoods', methods=('GET', 'POST'))
