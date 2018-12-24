@@ -9,18 +9,21 @@
     {% if g.user %}
         <p>歡迎{{g.user['UserName']}} PermissionID: {{g.user['PermissionID']}}</p>
         {% if g.user['PermissionID'] == 2%}
-            <a class="action" href="{{ url_for('goods.addNewGoods') }}">New</a>
+            <a class="action" href="{{ url_for('goods.addNewGoods') }}">New Goods</a>
+            <a class="action" href="{{ url_for('coupon.couponList') }}">Coupon List</a>
         {% endif %}
         <a href="{{ url_for('user.logout') }}">Log Out</a>
-    {% endif %}
 
-    {% if g.user['PermissionID'] == 1%}
-        <a href="{{ url_for('user.userList') }}">帳號名單</a>
-    {% endif %}
-    
-    {% if g.user['PermissionID'] == 3%}
-        <a href="{{ url_for('user.shoppingcart') }}">購物車</a>
-        <a href="{{ url_for('user.buyHistory') }}">購買紀錄</a>
+        {% if g.user['PermissionID'] == 1%}
+            <a href="{{ url_for('user.userList') }}">帳號名單</a>
+            <a class="action" href="{{ url_for('goods.addNewGoods') }}">New Goods</a>
+            <a class="action" href="{{ url_for('coupon.couponList') }}">Coupon List</a>
+        {% endif %}
+        
+        {% if g.user['PermissionID'] == 3%}
+            <a href="{{ url_for('user.shoppingcart') }}">購物車</a>
+            <a href="{{ url_for('user.buyHistory') }}">購買紀錄</a>
+        {% endif %}
     {% endif %}
 {% endblock %}
 
@@ -32,6 +35,9 @@
                     <h1>{{ post['GoodsName'] }}</h1>
                 </div>
             </header>
+            {% if g.user['PermissionID'] == 1%}
+                <a class="action" href="{{ url_for('goods.updateGoods', id=post['GoodsID']) }}">Edit</a>
+            {% endif %}
             {% if g.user['PermissionID'] == 2%}
                 <a class="action" href="{{ url_for('goods.updateGoods', id=post['GoodsID']) }}">Edit</a>
             {% endif %}
