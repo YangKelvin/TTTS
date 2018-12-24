@@ -301,3 +301,18 @@ def deleteAccount(user_id):
     )
     db.commit()
     return redirect(url_for('user.userList'))
+
+@bp.route('/search', methods=('GET', 'POST'))
+def searchUser():
+    if request.method == 'POST':
+        db = get_db()
+        name = request.form['searchName']
+        user = db.execute(            
+            'SELECT * FROM ACCOUNT'
+            ' WHERE UserName LIKE ?',
+            ('%' + name + '%',)
+        ).fetchall()
+
+        return render_template('user/userList.html', user=user)
+
+    return render_template('user/search.html')
