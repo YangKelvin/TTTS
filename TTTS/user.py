@@ -191,7 +191,7 @@ def load_logged_in_user():
         g.user = None
     else:
         g.user = get_db().execute(
-            'SELECT * FROM ACCOUNT WHERE AccountID = ?', (user_id,)
+            'SELECT A.AccountID, A.Account, A.Password, A.PermissionID, B.PermissionName, A.UserName, A.IdentificationNumber, A.Gender, A.CellphoneNumber, A.Email FROM ACCOUNT AS A, PERMISSION AS B WHERE A.PermissionID = B.PermissionID and AccountID = ?', (user_id,)
         ).fetchone()
 
 # 登出
@@ -316,3 +316,15 @@ def searchUser():
         return render_template('user/userList.html', user=user)
 
     return render_template('user/search.html')
+
+@bp.route('/statistics', methods=('GET', 'POST'))
+def statistics():
+    allGoodsStatistics = functions.get_all_goods_statistics()
+    return render_template('goods/statistics.html', allGoods=allGoodsStatistics)
+
+@bp.route('/<int:goods_id>/statistics', methods=('GET', 'POST'))
+def goods_statistics(goods_id):
+    goods = functions.get_goods(goods_id)
+    goodsName = goods['GoodsName']
+    goodsList = functions.get_goods_statistics_list(goods_id)
+    return render_template('goods/goods_statistics.html', list=goodsList, goods_name=goodsName)

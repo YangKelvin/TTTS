@@ -1,5 +1,5 @@
 {% block header %}
-    <h1>{% block title %}商品s{% endblock %}</h1>
+    <h1>{% block title %}商品分析{% endblock %}</h1>
     <a href="{{ url_for('search.search') }}">Search</a>
     {% if not g.user %}
         <a></a>
@@ -8,11 +8,10 @@
     {% endif %}
 
     {% if g.user %}
-        <p>歡迎{{g.user['UserName']}} Permission: {{ user['PermissionName'] }}</p>
+        <p>歡迎{{g.user['UserName']}} Permission: {{ g.user['PermissionName'] }}</p>
         {% if g.user['PermissionID'] == 2%}
             <a class="action" href="{{ url_for('goods.addNewGoods') }}">New Goods</a>
             <a class="action" href="{{ url_for('coupon.couponList') }}">Coupon List</a>
-            <a class="action" href="{{ url_for('user.statistics') }}">Statistics</a>
         {% endif %}
         <a href="{{ url_for('user.logout') }}">Log Out</a>
 
@@ -20,7 +19,7 @@
             <a href="{{ url_for('user.userList') }}">帳號名單</a>
             <a class="action" href="{{ url_for('goods.addNewGoods') }}">New Goods</a>
             <a class="action" href="{{ url_for('coupon.couponList') }}">Coupon List</a>
-            <a class="action" href="{{ url_for('user.statistics') }}">Statistics</a>
+            <a class="action">Statistics</a>
         {% endif %}
         
         {% if g.user['PermissionID'] == 3%}
@@ -31,23 +30,17 @@
 {% endblock %}
 
 {% block content %}
-    {% for post in posts %}
+    {% for goods in allGoods %}
         <article class="post">
             <header>
                 <div>
-                    <h1>{{ post['GoodsName'] }}</h1>
+                    <h1>{{ goods['GoodsName'] }}</h1>
                 </div>
             </header>
-            {% if g.user['PermissionID'] == 1%}
-                <a class="action" href="{{ url_for('goods.updateGoods', id=post['GoodsID']) }}">Edit</a>
-            {% endif %}
-            {% if g.user['PermissionID'] == 2%}
-                <a class="action" href="{{ url_for('goods.updateGoods', id=post['GoodsID']) }}">Edit</a>
-            {% endif %}
-            {% if g.user['PermissionID'] == 3%}
-                <a class="action" href="{{ url_for('goods.viewGoods', GoodsID=post['GoodsID']) }}">View</a>
-            {% endif %}
-            <div class="about">{{ post['Introduction'] }} price: {{ post['Price']}}元</div>
+            <div class="about">price: {{ goods['Price']}} 元</div>
+            <p>總共賣出數量: {{ goods['Amount'] }}</p>
+            <p>小記:{{ goods['TotalPrice'] }} 元</p>
+            <a href="{{ url_for('user.goods_statistics', goods_id = goods['GoodsID']) }}">明細</a>
         </article>
         {% if not loop.last %}
             <hr>

@@ -179,3 +179,41 @@ def get_user_buy_history_in_order(account_id, current_order_id):
         (account_id, current_order_id,)
     ).fetchall()
     return my_order_history
+
+# 產品分析
+def get_goods_statistics_list(id):
+    db = get_db()
+    goods_statistics_list = db.execute(
+        'SELECT D.UserName, C.GoodsName, B.Amount, B.Amount * C.Price AS Earn '
+        'FROM ORDERS AS A, SALES_ON AS B, GOODS AS C, ACCOUNT AS D '
+        'WHERE A.OrderID = B.OrderID and '
+        'B.GoodsID = C.GoodsID and '
+        'A.AccountID = D.AccountID and '
+        'B.GoodsID = ?',
+        (id,)
+    ).fetchall()
+    return goods_statistics_list
+
+def get_all_goods_statistics_list():
+    db = get_db()
+    goods_statistics_list = db.execute(
+        'SELECT D.UserName, C.GoodsName, B.Amount, B.Amount * C.Price AS Earn '
+        'FROM ORDERS AS A, SALES_ON AS B, GOODS AS C, ACCOUNT AS D '
+        'WHERE A.OrderID = B.OrderID and '
+        'B.GoodsID = C.GoodsID and '
+        'A.AccountID = D.AccountID',
+    ).fetchall()
+    return goods_statistics_list
+
+def get_all_goods_statistics():
+    db = get_db()
+    goods_statistics = db.execute(
+        'SELECT C.GoodsID, C.GoodsName, C.Price, SUM(B.Amount) AS Amount, SUM(B.Amount * C.Price) AS TotalPrice '
+        'FROM ORDERS AS A, SALES_ON AS B, GOODS AS C, ACCOUNT AS D '
+        'WHERE A.OrderID = B.OrderID and '
+        'B.GoodsID = C.GoodsID and '
+        'A.AccountID = D.AccountID '
+        'GROUP BY C.GoodsName '
+        'ORDER BY C.GoodsID ASC',
+    ).fetchall()
+    return goods_statistics
