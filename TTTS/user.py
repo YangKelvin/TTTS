@@ -127,10 +127,14 @@ def buyAllGoodsInShoppingCart():
     print('購買購物車中的商品')
     user = g.user
     myShoppingCart = functions.get_all_shopping_cart_goods(user['AccountID'])
+
     # myShoppingCart=getShoppingCart(user['AccountID'])
     totalPrice = 0
     for goods in myShoppingCart:
         totalPrice += int(goods['total'])
+
+    if totalPrice == 0:
+        return redirect(url_for('goods.index'))
 
     if request.method == 'POST':
         print('post')
