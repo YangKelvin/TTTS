@@ -1,5 +1,6 @@
 {% block header %}
     <h1>{% block title %}商品s{% endblock %}</h1>
+    <a href="{{ url_for('search.search') }}">Search</a>
     {% if not g.user %}
         <a></a>
         <a class="action" href="{{ url_for('user.register') }}">Register</a>
@@ -7,7 +8,7 @@
     {% endif %}
 
     {% if g.user %}
-        <p>歡迎{{g.user['UserName']}} PermissionID: {{g.user['PermissionID']}}</p>
+        <p>歡迎{{g.user['UserName']}} Permission: {{ user['PermissionName'] }}</p>
         {% if g.user['PermissionID'] == 2%}
             <a class="action" href="{{ url_for('goods.addNewGoods') }}">New Goods</a>
             <a class="action" href="{{ url_for('coupon.couponList') }}">Coupon List</a>
