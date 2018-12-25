@@ -88,7 +88,7 @@ def updateGoods(id):
             functions.update_goods(goodsName, goodsType, price, stockQuantity, introduction, imageName, countryOfOrigin)
             return redirect(url_for('goods.index'))
     
-    return render_template('goods/updateGoods.html', posts=post)
+    return render_template('goods/updateGoods.html', post=post)
 
 # 刪除特定商品
 @bp.route('/<int:id>/delete', methods=('POST',))
