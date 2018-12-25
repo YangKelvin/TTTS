@@ -1,15 +1,76 @@
 {% extends 'base.html' %}
 
-{% block header %}
-  <h1>{% block title %}Log In{% endblock %}</h1>
-{% endblock %}
+{% block title %}會員登入{% endblock %}
+{% block stylesheet %}<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/logIn.css') }}">{% endblock %}
 
-{% block content %}
-  <form method="post">
-    <label for="account">Account</label>
-    <input name="account" id="account" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Log In">
-  </form>
+{% block header %}
+<div class="container-fluid d-inline-flex justify-content-between navbar-fixed-top">
+    <div class="LOGO align-self-center">
+        <a href="{{ url_for('goods.index') }}">台北科技茗茶<br>TaipeiTech Tea Shop</a>
+    </div>
+    <div class="container-fluid hnav d-inline-flex justify-content-end">
+        {% if g.user %}
+        <span class="align-self-center text-white user-font-size px-3 border-left">{{ g.user['username'] }}</span>
+            {% if g.user['PermissionID'] == 1%}
+            <a class="btn btn-outline-light align-self-center header-btn mx-1" href="{{ url_for('user.userList') }}">帳號名單</a>
+            <a class="btn btn-outline-light align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% elif g.user['PermissionID'] == 2%}
+            <a class="btn btn-outline-light align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% elif g.user['PermissionID'] == 3%}
+            <a class="btn btn-outline-light align-self-center header-btn mx-1" href="{{ url_for('user.shoppingcart') }}">購物車</a>
+            <a class="btn btn-outline-light align-self-center header-btn mx-1" href="{{ url_for('user.buyHistory') }}">購買紀錄</a>
+            <a class="btn btn-outline-light align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% endif %}
+        {% else %}
+        <a class="nav-item" href="{{ url_for('user.login') }}"><img src="{{ url_for('static', filename='image/user.png') }}" alt="user"></a>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
+{% block content %}
+<div class="container my-5">
+    <div class="logIn-title text-center">
+        <label class="font-weight-bold" for="title">會員登入</label>
+    </div>
+    <div class="form-container">
+        <form method="POST">
+            <div class="form-group row">
+                <label for="account" class="col-sm-2 col-form-label">帳號</label>
+                <div class="col-sm-10">
+                <input type="text" name="account" id="account" class="form-control" placeholder="Account" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="password" class="col-sm-2 col-form-label">密碼</label>
+                <div class="col-sm-10">
+                <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-10 offset-sm-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberPassword">
+                        <label class="form-check-label" for="rememberPassword">記住密碼</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row align-items-center">
+                <div class="col-sm-4 offset-sm-2">
+                    <button type="submit" class="btn btn-primary">登入</button>
+                </div>
+                <div class="col-sm-4">
+                    <a href="{{ url_for('user.register') }}" class="btn btn-primary regist-button" role="button" aria-pressed="true">免費註冊</a>
+                </div>
+                <div class="col-sm-2 font-size-12">
+                    <a href="#">忘記密碼？</a>
+                </div>
+            </div>
+            {% for message in get_flashed_messages() %}
+            <div class="flash text-danger text-center font-weight-bold">{{ message }}</div>
+            {% endfor %}
+        </form>
+    </div>
+</div>
+{% endblock %} 
+{% block footer %}{% endblock %}
+{% block scripts %}{% endblock %}

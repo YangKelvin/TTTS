@@ -28,3 +28,10 @@
     <input name="amount2" id="amount2" value="{{ request.form['amount'] }}" required>
     <input class="addToShoppintCart" type="submit" value="加入購物車">
 </form>
+
+{% block scripts %}
+<script src="js/spinner.js"></script>
+<script>
+    $("input[type='number']").inputSpinner()
+</script>
+{% endblock %}

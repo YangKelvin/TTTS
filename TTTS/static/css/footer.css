@@ -1,8 +1,7 @@
 footer {
     background-color: rgb(0, 0, 0);
-    padding: 20px 115px;
+    width: 100%;
 }
-
 .footer-text {
     color: rgb(209, 213, 218);
     font-size: 14px;

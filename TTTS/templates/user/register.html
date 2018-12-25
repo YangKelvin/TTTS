@@ -1,25 +1,86 @@
 {% extends 'base.html' %}
 
+{% block title %}加入會員{% endblock %}
+{% block stylesheet %}<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/register.css') }}">{% endblock %}
+
 {% block header %}
-  <h1>{% block title %}Register{% endblock %}</h1>
+<div class="container-fluid d-inline-flex justify-content-between navbar-fixed-top">
+  <div class="LOGO align-self-center">
+      <a href="{{ url_for('goods.index') }}">台北科技茗茶<br>TaipeiTech Tea Shop</a>
+  </div>
+  <div class="container-fluid hnav d-inline-flex justify-content-end">
+      <a class="nav-item" href="{{ url_for('user.login') }}"><img src="{{ url_for('static', filename='image/user.png') }}" alt="user"></a>
+  </div>
+</div>
 {% endblock %}
 
 {% block content %}
-  <form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="account">Account</label>
-    <input name="account" id="account" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <label for="identification">Identification Number</label>
-    <input type="identification" name="identification" id="identification" required>
-    <label for="gender">Gender</label>
-    <input type="gender" name="gender" id="gender" required>
-    <label for="cellphone">Cellphone</label>
-    <input type="cellphone" name="cellphone" id="cellphone" required>
-    <label for="email">E-mail</label>
-    <input type="email" name="email" id="email" required>
-    <input type="submit" value="Register">    
-  </form>
+<div class="container">
+    <div class="logIn-title text-center">
+        <label class="font-weight-bold" for="title">加入會員</label>
+    </div>
+    <div class="form-container">
+        <form method="post">
+            <div class="form-group row">
+                <label for="username" class="col-sm-2 col-form-label">姓名</label>
+                <div class="col-sm-10">
+                <input type="text" class="form-control" name="username" id="username" placeholder="Name" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="account" class="col-sm-2 col-form-label">帳號</label>
+                <div class="col-sm-10">
+                <input type="text" class="form-control" name="account" id="account" placeholder="Account" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="password" class="col-sm-2 col-form-label">密碼</label>
+                <div class="col-sm-10">
+                <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="identification" class="col-sm-2 col-form-label">身分證</label>
+                <div class="col-sm-10">
+                <input type="text" class="form-control" name="identification" id="identification" placeholder="Identification" required>
+                </div>
+            </div>
+            <fieldset class="form-group">
+                <div class="row">
+                    <legend class="col-form-label col-sm-2 pt-0">性別</legend>
+                    <div class="col-sm-10 d-inline-flex">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="gender" id="genderMale" value="male" checked>
+                            <label class="form-check-label" for="genderMale">男</label>
+                        </div>
+                        <div class="form-check pl-5">
+                            <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="female">
+                            <label class="form-check-label" for="genderFemale">女</label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="form-group row">
+                <label for="cellphone" class="col-sm-2 col-form-label">手機</label>
+                <div class="col-sm-10">
+                <input type="tel" class="form-control" name="cellphone" id="cellphone" placeholder="Cellphone" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="email" class="col-sm-2 col-form-label">Email</label>
+                <div class="col-sm-10">
+                <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
+                </div>
+            </div>
+            <div class="form-group row align-items-center">
+                <div class="col-sm-8 offset-sm-2">
+                    <button type="submit" class="btn btn-primary p-2">立即註冊</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
+
+{% block footer %}{% endblock %}
+{% block scripts %}{% endblock %}

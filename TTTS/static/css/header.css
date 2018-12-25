@@ -16,10 +16,6 @@ header {
     background-color: rgb(73, 0, 0);
 }
 
-.LOGO {
-    margin: 0px 115px;
-}
-
 .LOGO a {
     display: inline-block;
     color: rgb(255, 255, 255);
@@ -35,15 +31,30 @@ header {
 }
 
 header .nav-item:hover {
-    background-color: rgb(233, 157, 71);;
+    background-color: rgb(233, 157, 71);
     color: rgb(248, 248, 248);
 }
 
 .hnav {
-    margin-right: 100px;
+    margin: 0;
 }
 
 .nav-item img {
     max-width: 23px;
-    height: inherit;
+}
+
+.search-btn {
+    color: #d1d5da;
+    background-color: transparent;
+    background-image: none;
+    border-color: #d1d5da;
+}
+
+.user-font-size {
+    font-size: 0.9rem;
+}
+
+.header-btn {
+    font-size: 0.9rem;
+    padding: 3px 8px;
 }
