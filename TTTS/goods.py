@@ -152,7 +152,7 @@ def buyGoods(GoodsID):
             discount = 1
             if goodsDiscount is None:
                 discount = 1
-                discountID = 0
+                discountID = 1
             else:
                 discount = goodsDiscount['DiscountPercentage']
                 discountID = goodsDiscount['DiscountID']

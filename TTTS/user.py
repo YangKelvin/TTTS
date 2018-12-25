@@ -347,3 +347,8 @@ def goods_statistics(goods_id):
     goodsName = goods['GoodsName']
     goodsList = functions.get_goods_statistics_list(goods_id)
     return render_template('goods/goods_statistics.html', list=goodsList, goods_name=goodsName)
+
+@bp.route('/orderList', methods=('GET', 'POST'))
+def orderList():
+    orders = functions.get_all_orders()
+    return render_template('user/orderStatus.html', orders = orders)

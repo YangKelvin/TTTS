@@ -217,3 +217,16 @@ def get_all_goods_statistics():
         'ORDER BY C.GoodsID ASC',
     ).fetchall()
     return goods_statistics
+
+def get_all_orders():
+    db = get_db()
+    orders = db.execute(
+        'SELECT  A.OrderID, B.Account, B.UserName, A.Address, C.ShippingMethodName, D.StatusName, E.PaymentName, F.DiscountName, F.DiscountPercentage, A.TotalPrice '
+        'FROM ORDERS AS A, ACCOUNT AS B, SHIPPINGMETHOD AS C, STATUS AS D, PAYMENT AS E, DISCOUNT AS F '
+        'WHERE A.AccountID = B.AccountID and '
+        'A.ShippingMethodID = C.ShippingMethodID and '
+        'A.StatusID = D.StatusID and '
+        'A.PaymentID = E.PaymentID and '
+        'A.DiscountID = F.DiscountID',
+    ).fetchall()
+    return orders
