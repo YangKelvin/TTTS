@@ -41,8 +41,8 @@
         <div class="container-fluid m-0 p-0 font-color-white row align-items-center">
             <p class="font-weight-bold mb-0 align-self-end font-size-16 col-4 p-0">帳戶名單 - All Accounts</p>
             <span class="text-center text-danger font-weight-bold border border-danger px-4 py-2 col-4">此處為帳戶管理介面，所有的操作請謹慎處理！</span>
-            <form method="post" class="form-inline my-2 my-lg-0 col-4 justify-content-end p-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="搜尋商品" aria-label="Search" name="searchName" id="searchName" required>
+            <form method="post" class="form-inline my-2 my-lg-0 col-4 justify-content-end p-0" action="{{ url_for('user.searchUser') }}">
+                <input class="form-control mr-sm-2" type="search" placeholder="搜尋使用者" aria-label="Search" name="searchName" id="searchName" required>
                 <button class="btn search-btn my-2 my-sm-0" type="submit">搜尋</button>
             </form>
             <a href="{{ url_for('user.searchUser') }}">Search UserName</a>
