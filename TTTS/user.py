@@ -356,7 +356,6 @@ def orderList():
     orders = functions.get_all_orders()
     if request.method == 'POST':
         newStatus = request.form['orderStatus']
-        updateOrderStatus(or)
 
     return render_template('user/orderStatus.html', orders = orders)
 
