@@ -52,6 +52,9 @@ def get_user(uid):
 # register
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
+    if g.user is not None:
+        return redirect('goods.index')
+
     if request.method == 'POST':
         username = request.form['username']
         account = request.form['account']
@@ -87,7 +90,10 @@ def register():
 
 # login
 @bp.route('/login', methods=('GET', 'POST'))
-def login():
+def login():    
+    if g.user is not None:
+        return redirect('goods.index')
+
     if request.method == 'POST':
         account = request.form['account']
         password = request.form['password']
@@ -113,6 +119,7 @@ def login():
 
 # 查看當前使用者的購物車
 @bp.route('/shoppingCart', methods=('GET', 'POST'))
+@login_required
 def shoppingcart():
     user = g.user
     myShoppingCart = functions.get_all_shopping_cart_goods(user['AccountID'])
@@ -123,6 +130,7 @@ def shoppingcart():
 
 # 購買購物車中所有的商品(未完成)
 @bp.route('/buyAllGoodsInShoppingCart', methods=('GET', 'POST'))
+@login_required
 def buyAllGoodsInShoppingCart():
     print('購買購物車中的商品')
     user = g.user
@@ -175,6 +183,7 @@ def buyAllGoodsInShoppingCart():
 
 # 查看當前使用者的購買紀錄
 @bp.route('/buyHistory', methods=('GET','POST'))
+@login_required
 def buyHistory():
     user = g.user
     # print('current user id:' + str(user['AccountID']))
@@ -201,6 +210,7 @@ def logout():
     return redirect(url_for('index'))
 
 @bp.route('/userList', methods=('GET', 'POST'))
+@login_required
 def userList():
     db = get_db()
     user = db.execute('SELECT * FROM ACCOUNT')
@@ -208,6 +218,7 @@ def userList():
 
 # 修改帳號資料
 @bp.route('/<int:user_id>/editUser', methods=('GET', 'POST'))
+@login_required
 def edit(user_id):
     user = get_user(user_id)
 
@@ -251,6 +262,7 @@ def edit(user_id):
 
 # admin創建帳號
 @bp.route('/create', methods=('GET', 'POST'))
+@login_required
 def create():
     if g.user['PermissionID'] is not 1:
         return redirect(url_for('user.login'))
@@ -293,6 +305,7 @@ def create():
     return render_template('user/create.html')
 
 @bp.route('/<int:user_id>/deleteAccount', methods=('GET', 'POST'))
+@login_required
 def deleteAccount(user_id):
     db = get_db()
     db.execute(
@@ -303,6 +316,7 @@ def deleteAccount(user_id):
     return redirect(url_for('user.userList'))
 
 @bp.route('/search', methods=('GET', 'POST'))
+@login_required
 def searchUser():
     if request.method == 'POST':
         db = get_db()
