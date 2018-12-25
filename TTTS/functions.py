@@ -31,7 +31,7 @@ def add_new_goods(name, goods_type, price, stockQuantity, introduction, imageNam
     db.commit()
 
 # 修改商品
-def update_goods(name, goods_type, price, stockQuantity, introduction, imageName, countryOfOrigin):
+def update_goods(name, goods_type, price, stockQuantity, introduction, imageName, countryOfOrigin, id):
     db = get_db()
     db.execute(
         'UPDATE GOODS SET GoodsName = ?, GoodsType = ?, Price = ?, StockQuantity = ?, Introduction = ?, ImageName = ?, CountryOfOrigin = ?'

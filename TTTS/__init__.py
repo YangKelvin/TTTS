@@ -106,7 +106,7 @@ def create_app(test_config=None):
         )
         database.execute(
             'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            ('好好喝烏龍茶', '烏龍茶', '100', '500', '好喝的綠茶喔', 'goodGreenTea.png', '1')
+            ('好好喝烏龍茶', '烏龍茶', '100', '500', '好喝的烏龍茶喔', 'goodGreenTea.png', '1')
         )
 
         print('init DISCOUNTTYPE')

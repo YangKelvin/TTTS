@@ -85,7 +85,7 @@ def updateGoods(id):
         if error is not None:
             flash(error)
         else:
-            functions.update_goods(goodsName, goodsType, price, stockQuantity, introduction, imageName, countryOfOrigin)
+            functions.update_goods(goodsName, goodsType, price, stockQuantity, introduction, imageName, countryOfOrigin, id)
             return redirect(url_for('goods.index'))
     
     return render_template('goods/updateGoods.html', post=post)
