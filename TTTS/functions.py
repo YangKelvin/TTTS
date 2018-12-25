@@ -51,7 +51,7 @@ def check_discount(discount_str):
     db = get_db()
     goodsDiscount = db.execute(
         'SELECT DiscountID, DiscountName, DiscountString, DiscountPercentage, DiscountTypeID FROM DISCOUNT WHERE DiscountString = ?',
-        ('shipping1',)
+        (discount_str,)
     ).fetchone()
     db.commit()
     return goodsDiscount

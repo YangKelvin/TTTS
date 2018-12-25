@@ -155,11 +155,16 @@ def buyAllGoodsInShoppingCart():
             print('訂購成功')
             db = get_db()
             # 設定折扣
-            discount = functions.get_discount(discountStr)
-            resultPrice = int(totalPrice) * discount['DiscountPercentage']
+            goodsDiscount = functions.get_discount(discountStr)
+            discount = 1
+            if goodsDiscount is None:
+                discount = 1
+            else:
+                discount = goodsDiscount['DiscountPercentage']
+            resultPrice = int(totalPrice) * discount
 
             # 新增訂單資料（ORDERS）
-            functions.add_new_order(user['AccountID'], address, ShippingMethodID, paymentID, discount['DiscountID'], resultPrice)
+            functions.add_new_order(user['AccountID'], address, ShippingMethodID, paymentID, discount, resultPrice)
 
             # 取得最新 OrderID
             newOrder = db.execute(

@@ -108,22 +108,6 @@ def create_app(test_config=None):
             'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
             ('好好喝烏龍茶', '烏龍茶', '100', '500', '好喝的綠茶喔', 'goodGreenTea.png', '1')
         )
-        database.execute(
-            'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            ('好好喝紅茶', '紅茶', '200', '5', '好喝的紅茶喔', 'goodBlackTea.png', '1')
-        )
-        database.execute(
-            'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            ('好好喝紅茶', '紅茶', '200', '5', '好喝的紅茶喔', 'goodBlackTea.png', '1')
-        )
-        database.execute(
-            'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            ('好好喝紅茶', '紅茶', '200', '5', '好喝的紅茶喔', 'goodBlackTea.png', '1')
-        )
-        database.execute(
-            'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            ('好好喝紅茶', '紅茶', '200', '5', '好喝的紅茶喔', 'goodBlackTea.png', '1')
-        )
 
         print('init DISCOUNTTYPE')
         database.execute(

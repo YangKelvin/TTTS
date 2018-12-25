@@ -130,14 +130,14 @@ def buyGoods(GoodsID):
         address = request.form['addresss']
         ShippingMethodID = request.form['shippingMethod']
         paymentID = request.form['payment']
-        discount = request.form['discount']
+        discountStr = request.form['discount']
         orderAmount = request.form['orderAmount']
 
         print('--------訂購資訊--------')
         print('address:' + address)
         print('shipping method id:' + ShippingMethodID)
         print('payment id:' + paymentID)
-        print('discount:' + discount)
+        print('discountStr:' + discountStr)
         print('order amount:' + orderAmount)
         print('---------------------')
         
@@ -147,17 +147,23 @@ def buyGoods(GoodsID):
             db = get_db()
 
             # 查詢折扣是否存在
-            goodsDiscount = functions.check_discount(discount)
+            goodsDiscount = functions.check_discount(discountStr)
+            discountID = None
             discount = 1
             if goodsDiscount is None:
                 discount = 1
+                discountID = 0
             else:
                 discount = goodsDiscount['DiscountPercentage']
-            print(goodsDiscount['DiscountPercentage'])
+                discountID = goodsDiscount['DiscountID']
+            # print(goodsDiscount)
 
             # 新增訂單資料（ORDERS）
             totalPrice=int(orderAmount) * int(buyGoods['Price'] * discount) 
-            functions.add_new_order(session.get('user_id'), address, ShippingMethodID, paymentID, goodsDiscount['DiscountID'], totalPrice)
+            print ("discount:" + str(discount))
+            print ("discountID:" + str(discountID))
+            print ("total:" + str(totalPrice))
+            functions.add_new_order(session.get('user_id'), address, ShippingMethodID, paymentID, discountID, totalPrice)
 
             # 取得最新 OrderID
             newOrder = db.execute(
