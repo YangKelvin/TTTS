@@ -49,8 +49,8 @@
     <div class="container-fluid my-2">
         <div class="container-fluid m-0 p-0 font-color-white row align-items-center justify-content-between">
             <p class="font-weight-bold mb-0 font-size-16 align-self-end">所有訂單 - All Orders</p>
-            <form method="post" class="form-inline my-2 my-lg-0" action="{{ url_for('search.search')}}">
-                <input class="form-control mr-sm-2" type="search" placeholder="搜尋商品" aria-label="Search" name="searchName" id="searchName" required>
+            <form method="post" class="form-inline my-2 my-lg-0" action="{{ url_for('user.searchOrder')}}">
+                <input class="form-control mr-sm-2" type="search" placeholder="搜尋" aria-label="Search" name="searchName" id="searchName" required>
                 <button class="btn search-btn my-2 my-sm-0" type="submit">搜尋</button>
             </form>
         </div>
