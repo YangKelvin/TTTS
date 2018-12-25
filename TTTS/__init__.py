@@ -24,6 +24,10 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    @app.route('/')
+    def index():
+        return render_template('index.html')
+
     from . import db
     db.init_app(app)
 
@@ -38,7 +42,7 @@ def create_app(test_config=None):
 
     from . import goods
     app.register_blueprint(goods.bp)
-    app.add_url_rule('/goods', endpoint='index')
+    app.add_url_rule('/', endpoint='index', view_func=index)
 
     @app.route('/initDatabase')
     def initDataBase():
