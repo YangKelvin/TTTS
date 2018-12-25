@@ -107,3 +107,12 @@ header {
     letter-spacing: 2px;
     line-height: 30px;
 }
+
+.user-font-size {
+    font-size: 0.9rem;
+}
+
+.header-btn {
+    font-size: 0.9rem;
+    padding: 3px 8px;
+}
