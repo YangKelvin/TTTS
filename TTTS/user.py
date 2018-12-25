@@ -359,6 +359,12 @@ def orderList():
 
     return render_template('user/orderStatus.html', orders = orders)
 
-@bp.route('/orderList', methods=('GET', 'POST'))
-def updateOrderStatus(orderID, newStatusID):
-    pass
+@bp.route('<int:orderID>/updateOrderStatus', methods=('GET', 'POST'))
+def updateOrderStatus(orderID):
+    if request.method == 'POST':
+        newStatus = request.form['orderStatus']
+        print(orderID)
+        print(newStatus)
+        functions.update_order_status(orderID, newStatus)
+
+    return redirect(url_for('user.orderList'))

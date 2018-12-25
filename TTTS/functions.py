@@ -235,6 +235,6 @@ def update_order_status(order_id, status_id):
     db = get_db()
     db.execute(
         'UPDATE ORDERS SET StatusID = ? WHERE OrderID = ? ',
-        (order_id, status_id)
+        (status_id, order_id)
     )
     db.commit()
