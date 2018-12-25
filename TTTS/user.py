@@ -157,14 +157,17 @@ def buyAllGoodsInShoppingCart():
             # 設定折扣
             goodsDiscount = functions.get_discount(discountStr)
             discount = 1
+            discounID = None
             if goodsDiscount is None:
                 discount = 1
+                discounID = 1
             else:
                 discount = goodsDiscount['DiscountPercentage']
+                discounID = goodsDiscount['DiscountID']
             resultPrice = int(totalPrice) * discount
 
             # 新增訂單資料（ORDERS）
-            functions.add_new_order(user['AccountID'], address, ShippingMethodID, paymentID, discount, resultPrice)
+            functions.add_new_order(user['AccountID'], address, ShippingMethodID, paymentID, discounID, resultPrice)
 
             # 取得最新 OrderID
             newOrder = db.execute(
@@ -351,4 +354,12 @@ def goods_statistics(goods_id):
 @bp.route('/orderList', methods=('GET', 'POST'))
 def orderList():
     orders = functions.get_all_orders()
+    if request.method == 'POST':
+        newStatus = request.form['orderStatus']
+        updateOrderStatus(or)
+
     return render_template('user/orderStatus.html', orders = orders)
+
+@bp.route('/orderList', methods=('GET', 'POST'))
+def updateOrderStatus(orderID, newStatusID):
+    pass

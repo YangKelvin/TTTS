@@ -230,3 +230,11 @@ def get_all_orders():
         'A.DiscountID = F.DiscountID',
     ).fetchall()
     return orders
+
+def update_order_status(order_id, status_id):
+    db = get_db()
+    db.execute(
+        'UPDATE ORDERS SET StatusID = ? WHERE OrderID = ? ',
+        (order_id, status_id)
+    )
+    db.commit()

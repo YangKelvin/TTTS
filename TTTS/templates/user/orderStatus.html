@@ -60,7 +60,7 @@
                 <div class="col-3 align-self-center">
                     <img class="product-img" src="{{ url_for('static', filename='image/product1.jpg') }}" alt="Card image cap">
                 </div>
-                <div class="card-body col-9 mx-auto d-flex flex-column justify-content-between">
+                <form method="post" class="card-body col-9 mx-auto d-flex flex-column justify-content-between">                    
                     <h5 class="card-title offset-1">訂單編號: {{ order['OrderID'] }}</h5>
                     <span class="about offset-1 pb-2">買家帳號： {{ order['Account'] }}</span>
                     <span class="about offset-1 pb-2">買家用戶名稱： {{ order['UserName'] }}</span>
@@ -83,7 +83,8 @@
                     <span class="about offset-1 row">
                             總金額： {{ order['TotalPrice'] }}
                     </span>
-                </div>
+                    <button class="btn search-btn my-2 my-sm-0" type="submit">確定</button>
+                </form>
             </div>
             <hr>
         {% endfor %}
