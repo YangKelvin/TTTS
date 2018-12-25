@@ -1,0 +1,4 @@
+include TTTS/schema.sql
+graft TTTS/static
+graft TTTS/templates
+global-exclude *.pyc

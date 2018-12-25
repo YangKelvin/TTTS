@@ -218,7 +218,14 @@ def delete_shoppingCart_goods(GoodsID):
     print('delete goods id:' + str(deleteGoods['GoodsID']))
     print('current user id:' + str(session.get('user_id')))
     # 刪除
-    functions.delete_goods_from_shopping_cart(deleteGoodsID, session.get('user_id'))
-
+    db = get_db()
+    db.execute(
+        'DELETE FROM SHOPPINGCART '
+        'WHERE SHOPPINGCART.GoodsID = ? AND SHOPPINGCART.AccountID = ?', 
+        (deleteGoodsID, session.get('user_id'),)
+    )
+    db.commit()
+    # functions.delete_goods_from_shopping_cart(int(deleteGoodsID), int(session.get('user_id')))
+    print('delete')
     # 待修改
     return redirect(url_for('goods.index'))
