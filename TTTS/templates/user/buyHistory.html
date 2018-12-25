@@ -1,5 +1,5 @@
 {% block header %}
-    <h1>{% block title %}商品s{% endblock %}</h1>
+    <h1>{% block title %}商品{% endblock %}</h1>
     {% if not g.user %}
         <a></a>
         <a class="action" href="{{ url_for('user.register') }}">Register</a>

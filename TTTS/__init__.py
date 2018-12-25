@@ -23,6 +23,10 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+    
+    @app.route('/TTTS')
+    def TTTS():
+        return render_template('TTTS.html')
 
     from . import db
     db.init_app(app)
@@ -38,7 +42,7 @@ def create_app(test_config=None):
 
     from . import goods
     app.register_blueprint(goods.bp)
-    app.add_url_rule('/goods', endpoint='index')
+    app.add_url_rule('/', endpoint='TTTS', view_func=TTTS)
 
     @app.route('/initDatabase')
     def initDataBase():
@@ -102,23 +106,7 @@ def create_app(test_config=None):
         )
         database.execute(
             'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            ('好好喝烏龍茶', '烏龍茶', '100', '500', '好喝的綠茶喔', 'goodGreenTea.png', '1')
-        )
-        database.execute(
-            'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            ('好好喝紅茶', '紅茶', '200', '5', '好喝的紅茶喔', 'goodBlackTea.png', '1')
-        )
-        database.execute(
-            'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            ('好好喝紅茶', '紅茶', '200', '5', '好喝的紅茶喔', 'goodBlackTea.png', '1')
-        )
-        database.execute(
-            'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            ('好好喝紅茶', '紅茶', '200', '5', '好喝的紅茶喔', 'goodBlackTea.png', '1')
-        )
-        database.execute(
-            'INSERT INTO GOODS (GoodsName, GoodsType, Price, StockQuantity, Introduction, ImageName, CountryOfOrigin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            ('好好喝紅茶', '紅茶', '200', '5', '好喝的紅茶喔', 'goodBlackTea.png', '1')
+            ('好好喝烏龍茶', '烏龍茶', '100', '500', '好喝的烏龍茶喔', 'goodGreenTea.png', '1')
         )
 
         print('init DISCOUNTTYPE')
@@ -136,6 +124,10 @@ def create_app(test_config=None):
         )
 
         print('init DISCOUNT')  
+        database.execute(
+            'INSERT INTO DISCOUNT (DiscountName, DiscountString, DiscountTypeID, DiscountPercentage) VALUES(?, ?, ?, ?)',
+            ('none', 'special', 1, 1)
+        )
         database.execute(
             'INSERT INTO DISCOUNT (DiscountName, DiscountString, DiscountTypeID, DiscountPercentage) VALUES(?, ?, ?, ?)',
             ('shipping discount 1', 'shipping1', 1, 0.9)

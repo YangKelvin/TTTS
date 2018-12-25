@@ -31,7 +31,7 @@ def add_new_goods(name, goods_type, price, stockQuantity, introduction, imageNam
     db.commit()
 
 # 修改商品
-def update_goods(name, goods_type, price, stockQuantity, introduction, imageName, countryOfOrigin):
+def update_goods(name, goods_type, price, stockQuantity, introduction, imageName, countryOfOrigin, id):
     db = get_db()
     db.execute(
         'UPDATE GOODS SET GoodsName = ?, GoodsType = ?, Price = ?, StockQuantity = ?, Introduction = ?, ImageName = ?, CountryOfOrigin = ?'
@@ -51,7 +51,7 @@ def check_discount(discount_str):
     db = get_db()
     goodsDiscount = db.execute(
         'SELECT DiscountID, DiscountName, DiscountString, DiscountPercentage, DiscountTypeID FROM DISCOUNT WHERE DiscountString = ?',
-        ('shipping1',)
+        (discount_str,)
     ).fetchone()
     db.commit()
     return goodsDiscount
@@ -217,3 +217,24 @@ def get_all_goods_statistics():
         'ORDER BY C.GoodsID ASC',
     ).fetchall()
     return goods_statistics
+
+def get_all_orders():
+    db = get_db()
+    orders = db.execute(
+        'SELECT  A.OrderID, B.Account, B.UserName, A.Address, C.ShippingMethodName, D.StatusName, E.PaymentName, F.DiscountName, F.DiscountPercentage, A.TotalPrice '
+        'FROM ORDERS AS A, ACCOUNT AS B, SHIPPINGMETHOD AS C, STATUS AS D, PAYMENT AS E, DISCOUNT AS F '
+        'WHERE A.AccountID = B.AccountID and '
+        'A.ShippingMethodID = C.ShippingMethodID and '
+        'A.StatusID = D.StatusID and '
+        'A.PaymentID = E.PaymentID and '
+        'A.DiscountID = F.DiscountID',
+    ).fetchall()
+    return orders
+
+def update_order_status(order_id, status_id):
+    db = get_db()
+    db.execute(
+        'UPDATE ORDERS SET StatusID = ? WHERE OrderID = ? ',
+        (status_id, order_id)
+    )
+    db.commit()

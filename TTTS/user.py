@@ -52,6 +52,9 @@ def get_user(uid):
 # register
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
+    if g.user is not None:
+        return redirect('goods.index')
+
     if request.method == 'POST':
         username = request.form['username']
         account = request.form['account']
@@ -87,7 +90,10 @@ def register():
 
 # login
 @bp.route('/login', methods=('GET', 'POST'))
-def login():
+def login():    
+    if g.user is not None:
+        return redirect('goods.index')
+
     if request.method == 'POST':
         account = request.form['account']
         password = request.form['password']
@@ -105,7 +111,7 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user['AccountID']
-            return redirect(url_for('index'))
+            return redirect(url_for('goods.index'))
 
         flash(error)
 
@@ -113,6 +119,7 @@ def login():
 
 # 查看當前使用者的購物車
 @bp.route('/shoppingCart', methods=('GET', 'POST'))
+@login_required
 def shoppingcart():
     user = g.user
     myShoppingCart = functions.get_all_shopping_cart_goods(user['AccountID'])
@@ -123,6 +130,7 @@ def shoppingcart():
 
 # 購買購物車中所有的商品(未完成)
 @bp.route('/buyAllGoodsInShoppingCart', methods=('GET', 'POST'))
+@login_required
 def buyAllGoodsInShoppingCart():
     print('購買購物車中的商品')
     user = g.user
@@ -147,11 +155,19 @@ def buyAllGoodsInShoppingCart():
             print('訂購成功')
             db = get_db()
             # 設定折扣
-            discount = functions.get_discount(discountStr)
-            resultPrice = int(totalPrice) * discount['DiscountPercentage']
+            goodsDiscount = functions.get_discount(discountStr)
+            discount = 1
+            discounID = None
+            if goodsDiscount is None:
+                discount = 1
+                discounID = 1
+            else:
+                discount = goodsDiscount['DiscountPercentage']
+                discounID = goodsDiscount['DiscountID']
+            resultPrice = int(totalPrice) * discount
 
             # 新增訂單資料（ORDERS）
-            functions.add_new_order(user['AccountID'], address, ShippingMethodID, paymentID, discount['DiscountID'], resultPrice)
+            functions.add_new_order(user['AccountID'], address, ShippingMethodID, paymentID, discounID, resultPrice)
 
             # 取得最新 OrderID
             newOrder = db.execute(
@@ -175,6 +191,7 @@ def buyAllGoodsInShoppingCart():
 
 # 查看當前使用者的購買紀錄
 @bp.route('/buyHistory', methods=('GET','POST'))
+@login_required
 def buyHistory():
     user = g.user
     # print('current user id:' + str(user['AccountID']))
@@ -198,9 +215,10 @@ def load_logged_in_user():
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    return redirect(url_for('goods.index'))
 
 @bp.route('/userList', methods=('GET', 'POST'))
+@login_required
 def userList():
     db = get_db()
     user = db.execute('SELECT * FROM ACCOUNT')
@@ -208,6 +226,7 @@ def userList():
 
 # 修改帳號資料
 @bp.route('/<int:user_id>/editUser', methods=('GET', 'POST'))
+@login_required
 def edit(user_id):
     user = get_user(user_id)
 
@@ -251,6 +270,7 @@ def edit(user_id):
 
 # admin創建帳號
 @bp.route('/create', methods=('GET', 'POST'))
+@login_required
 def create():
     if g.user['PermissionID'] is not 1:
         return redirect(url_for('user.login'))
@@ -293,6 +313,7 @@ def create():
     return render_template('user/create.html')
 
 @bp.route('/<int:user_id>/deleteAccount', methods=('GET', 'POST'))
+@login_required
 def deleteAccount(user_id):
     db = get_db()
     db.execute(
@@ -303,6 +324,7 @@ def deleteAccount(user_id):
     return redirect(url_for('user.userList'))
 
 @bp.route('/search', methods=('GET', 'POST'))
+@login_required
 def searchUser():
     if request.method == 'POST':
         db = get_db()
@@ -328,3 +350,21 @@ def goods_statistics(goods_id):
     goodsName = goods['GoodsName']
     goodsList = functions.get_goods_statistics_list(goods_id)
     return render_template('goods/goods_statistics.html', list=goodsList, goods_name=goodsName)
+
+@bp.route('/orderList', methods=('GET', 'POST'))
+def orderList():
+    orders = functions.get_all_orders()
+    if request.method == 'POST':
+        newStatus = request.form['orderStatus']
+
+    return render_template('user/orderStatus.html', orders = orders)
+
+@bp.route('<int:orderID>/updateOrderStatus', methods=('GET', 'POST'))
+def updateOrderStatus(orderID):
+    if request.method == 'POST':
+        newStatus = request.form['orderStatus']
+        print(orderID)
+        print(newStatus)
+        functions.update_order_status(orderID, newStatus)
+
+    return redirect(url_for('user.orderList'))

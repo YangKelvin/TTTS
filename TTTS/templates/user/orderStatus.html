@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}購買茗茶{% endblock %}
+{% block title %}訂單狀態{% endblock %}
 {% block stylesheet %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/header.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/footer.css') }}">
@@ -48,35 +48,43 @@
 <div class="container-fluid row my-2 col-10 offset-1 mb-5 mt-4">
     <div class="container-fluid my-2">
         <div class="container-fluid m-0 p-0 font-color-white row align-items-center justify-content-between">
-            <p class="font-weight-bold mb-0 font-size-16 align-self-end">所有商品 - All Products</p>
+            <p class="font-weight-bold mb-0 font-size-16 align-self-end">所有訂單 - All Orders</p>
             <form method="post" class="form-inline my-2 my-lg-0" action="{{ url_for('search.search')}}">
                 <input class="form-control mr-sm-2" type="search" placeholder="搜尋商品" aria-label="Search" name="searchName" id="searchName" required>
                 <button class="btn search-btn my-2 my-sm-0" type="submit">搜尋</button>
             </form>
         </div>
         <hr>
-        {% for post in posts %}
+        {% for order in orders %}
             <div class="container-fluid row col-12 mx-0">
                 <div class="col-3 align-self-center">
                     <img class="product-img" src="{{ url_for('static', filename='image/product1.jpg') }}" alt="Card image cap">
                 </div>
-                <div class="card-body col-9 mx-auto d-flex flex-column justify-content-between">
-                    <h5 class="card-title offset-1">{{ post['GoodsName'] }}</h5>
-                    <span class="about offset-1 pb-2">介紹： {{ post['Introduction'] }}</span>
-                    <span class="about offset-1 pb-2">庫存： {{ post['StockQuantity'] }}</span>
+                <form method="post" action="{{ url_for('user.updateOrderStatus', orderID=order['OrderID']) }}" class="card-body col-9 mx-auto d-flex flex-column justify-content-between">                    
+                    <label name="OrderID" id="OrderID" class="card-title offset-1">訂單編號: {{ order['OrderID'] }}</label>
+                    <span class="about offset-1 pb-2">買家帳號： {{ order['Account'] }}</span>
+                    <span class="about offset-1 pb-2">買家用戶名稱： {{ order['UserName'] }}</span>
+                    <span class="about offset-1 pb-2">送達地址： {{ order['Address'] }}</span>
+                    <span class="about offset-1 pb-2">取貨地點： {{ order['ShippingMethodName'] }}</span>
+                    <span class="about offset-1 pb-2">當前貨物狀態： {{ order['StatusName'] }}</span>
+                    <span class="about offset-1 pb-2">修改當前貨物狀態: </span>
+                    <select name="orderStatus" id="orderStatus" class="card-body col-9 mx-auto d-flex flex-column justify-content-between">
+                        <option value = "1" >Process</option>
+                        <option value = "2" >Transportation</option>
+                        <option value = "3" >Arrival</option>
+                        <option value = "4" >Carry out</option>
+                        <option value = "5" >Fail</option>
+                        <option value = "6" >Apply</option>
+                        <option value = "7" >Cancel</option>
+                    </select>
+                    <span class="about offset-1 pb-2">付款方式： {{ order['PaymentName'] }}</span>
+                    <span class="about offset-1 pb-2">折扣方式 {{ order['DiscountName'] }}</span>
+                    <span class="about offset-1 pb-2">折扣： {{ order['DiscountPercentage'] }}</span>
                     <span class="about offset-1 row">
-                        單價： NT${{ post['Price']}}
-                        {% if g.user['PermissionID'] == 1%}
-                            <a class="btn btn-primary offset-8 disabled" href="{{ url_for('goods.viewGoods', GoodsID=post['GoodsID']) }}">購買/加入購物車</a>
-                        {% elif g.user['PermissionID'] == 2%}
-                            <a class="btn btn-primary offset-8" href="{{ url_for('goods.updateGoods', id=post['GoodsID']) }}">編輯商品資訊</a>
-                        {% elif  g.user['PermissionID'] == 3%}
-                            <a class="btn btn-primary offset-8" href="{{ url_for('goods.viewGoods', GoodsID=post['GoodsID']) }}">購買/加入購物車</a>
-                        {% else %}
-                            <a class="btn btn-primary offset-8" href="{{ url_for('user.login') }}">購買/加入購物車</a>
-                        {% endif %}
+                            總金額： {{ order['TotalPrice'] }}
                     </span>
-                </div>
+                    <button class="btn search-btn my-2 my-sm-0" type="submit">確定</button>
+                </form>
             </div>
             <hr>
         {% endfor %}
