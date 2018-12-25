@@ -95,7 +95,11 @@ def add_new_goods_in_shopping_cart(account_id, goods_id, amount):
 
 def delete_goods_from_shopping_cart(account_id, goods_id):
     db = get_db()
-    db.execute('DELETE FROM SHOPPINGCART WHERE SHOPPINGCART.GoodsID = ? AND SHOPPINGCART.AccountID = ?', (goods_id, account_id),)
+    db.execute(
+        'DELETE FROM SHOPPINGCART' 
+        'WHERE SHOPPINGCART.GoodsID = ? AND SHOPPINGCART.AccountID = ?', 
+        (goods_id, account_id),
+        )
     db.commit()
 
 def delete_all_goods_from_shopping_cart(account_id):
