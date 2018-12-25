@@ -142,7 +142,7 @@ def create_app(test_config=None):
         )
         database.execute(
             'INSERT INTO DISCOUNT (DiscountName, DiscountString, DiscountTypeID, DiscountPercentage) VALUES(?, ?, ?, ?)',
-            ('special discount 1', 'special', 3, 0.6)
+            ('special discount 1', 'special1', 3, 0.6)
         )
 
         print ('init SHIPPINGMETHOD')
