@@ -60,17 +60,17 @@
                     <p class="about offset-1 pb-2">單價：{{ goods['Price'] }}</p>
                     <p class="about offset-1 pb-2">數量：{{ goods['Amount']}}</p>
                     <p class="about offset-1 pb-2">金額：{{ goods['total']}}</p>
-                    <a class="action about offset-1 row" href="{{ url_for('goods.delete_shoppingCart_goods', GoodsID=goods['GoodsID']) }}">刪除</a>
+                    <a class="action about offset-1 row btn btn-secondary col-2" href="{{ url_for('goods.delete_shoppingCart_goods', GoodsID=goods['GoodsID']) }}">刪除</a>
                 </div>
             </div>
             <hr>
         {% endfor %}
         
         </div>
-        <p></p>
-        <p>總金額：{{ total }}</p>
-        <p></p>
-        <a class="action" href="{{ url_for('user.buyAllGoodsInShoppingCart') }}">購買購物車中的商品</a>
+        <div class="row justify-content-between col-12">
+            <p class="offset-1">總金額：NT${{ total }}</p>
+            <a class="action btn btn-primary col-2" href="{{ url_for('user.buyAllGoodsInShoppingCart') }}">結帳</a>
+        </div>
     </div>
 </div>
 {% endblock %}

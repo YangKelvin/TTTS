@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}商品資訊{% endblock %}
+{% block title %} - 商品資訊{% endblock %}
 {% block stylesheet %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/header.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/footer.css') }}">
@@ -40,7 +40,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid row my-2 col-10 offset-1 mb-5 mt-4">
+<div class="container-fluid row my-2 col-10 offset-1 mt-4">
     <div class="container-fluid my-2">
         <div class="container-fluid m-0 p-0 font-color-white row align-items-center justify-content-between">
             <p class="font-weight-bold mb-0 font-size-16 align-self-end">{{ post['goodsName'] }}</p>
@@ -53,31 +53,43 @@
     </div>
 </div>
 
-
-
-<!-- <form method="post"> -->
-    <form action="{{ url_for('goods.buyGoods', GoodsID=post['GoodsID']) }}">
-        <label for="goodsName">名稱：{{ post['goodsName'] }}</label>
-        <p></p>
-        <label for="goodsType">茶種：{{ post['GoodsType'] }}</label>
-        <p></p>
-        <label for="price">價格：{{ post['Price'] }}</label>
-        <p></p>
-        <label for="stockQuantity">庫存：{{ post['StockQuantity'] }}</label>
-        <p></p>
-        <label for="introduction">介紹：{{ post['Introduction'] }}</label>
-        <p></p>
-        <label for="imageName">圖片：{{ post['ImageName'] }}</label>
-        <!-- <input type="file" name="imageName" id="imageName" accept="image/*"> -->
-        <p></p>
-        <label for="countryOfOrigin">產地：{{ temp }}</label>
-        <p></p>
-        <input type="submit" value="Buy">
-    </form>
-    <form action="{{ url_for('goods.addToShoppingCart', GoodsID=post['GoodsID']) }}" method="post">
-        <label for="amount2">放入購物車數量</label>
-        <input name="amount2" id="amount2" value="{{ request.form['amount'] }}" required>
-        <input class="addToShoppintCart" type="submit" value="加入購物車">
+<form action="{{ url_for('goods.buyGoods', GoodsID=post['GoodsID']) }}">
+        <div class="card border border-secondary col-5 mx-auto mb-5">
+            <div class="pt-4 align-self-center">
+                <img class="card-img-top product-img" src="{{ url_for('static', filename='image/product1.jpg') }}" alt="Card image cap">
+            </div>
+            <hr>
+            <div class="card-body">
+                <div class="form-container">
+                    <form>
+                        <div class="form-group row m-0">
+                            <label for="goodsName" class="col-sm-12 col-form-label">名稱：{{ post['goodsName'] }}</label>
+                        </div>
+                        <div class="form-group row m-0">
+                            <label for="goodsType" class="col-sm-12 col-form-label">茶種：{{ post['GoodsType'] }}</label>
+                        </div>
+                        <div class="form-group row m-0">
+                            <label for="price" class="col-sm-12 col-form-label">價格：{{ post['Price'] }}</label>
+                        </div>
+                        <div class="form-group row m-0">
+                            <label for="stockQuantity" class="col-sm-12 col-form-label">庫存：{{ post['StockQuantity'] }}</label>
+                        </div>
+                        <div class="form-group row m-0">
+                            <label for="introduction" class="col-sm-12 col-form-label">介紹：{{ post['Introduction'] }}</label>
+                        </div>
+                        <div class="form-group row m-0 pl-0">
+                            <label for="countryOfOrigin" class="col-sm-12 col-form-label">產地：{{ temp }}</label>
+                        </div>
+                    </form>
+                    <form action="{{ url_for('goods.addToShoppingCart', GoodsID=post['GoodsID']) }}" method="post">
+                        <label for="amount2 col-sm-12 col-form-label">放入購物車數量：</label>
+                        <input type="number" name="amount2" id="amount2" value="{{ request.form['amount'] }}" min="1" max="{{ post['StockQuantity'] }}" step="1" required/>
+                        <input class="addToShoppintCart col-12 py-2 mb-2 btn btn-primary mt-4" type="submit" value="加入購物車">
+                    </form>
+                    <input class="col-12 py-2 mb-2 btn btn-primary" type="submit" value="直接購買">
+                </div>
+            </div>
+        </div>
     </form>
 {% endblock %}
 
@@ -109,7 +121,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="js/spinner.js"></script>
+<script src="{{ url_for('static', filename='js/spinner.js') }}"></script>
 <script>
     $("input[type='number']").inputSpinner()
 </script>
