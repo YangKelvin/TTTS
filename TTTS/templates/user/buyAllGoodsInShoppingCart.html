@@ -1,36 +1,147 @@
-<!doctype html>
-<title>北科茗茶 - 購買</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='stylee.css') }}">
+{% extends 'base.html' %}
 
-<h1>購買購物車中的商品</h1>
+{% block title %} - 結帳{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/header.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/footer.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/purchase.css') }}">
+{% endblock %}
 
-<form method="post">
-    {% for goods in shoppingCart %}
-        <p>商品名稱： {{ goods['goodsName'] }}</p>
-        <p>商品單價： {{ goods['Price'] }}</p>
-        <p>商品庫存： {{ goods['StockQuantity'] }}</p>
-        <p>商品圖片名稱： {{ goods['ImageName'] }}</p>
-        <p>購買數量：{{ goods['Amount'] }}</p>
-        <p>花費： {{ goods['totalPrice'] }}</p>
-    {% endfor %}
-    <label for="address">address</label>
-    <input name="addresss" id="addresss" required>
-    <p></p>
-    <label for="shippingMethod">運送方式：</label>
-    <select name="shippingMethod" id="shippingMethod">
-        <option value="1">超商取貨</option>
-        <option value="2">宅配到府</option>
-    </select>
-    <p></p>
-    <label for="payment">付款方式：</label>
-    <select name="payment" id="payment">
-        <option value="1">現金</option>
-        <option value="2">信用卡</option>
-    </select>
-    <p></p>
-    <label for="discount">折扣券：</label>
-    <input name="discount" id="discount" value="{{ request.form['discount'] }}" >
-    <p></p>
-    <p>總金額：{{ total }}</p>
-    <input type="submit" value="確定購買">
-</form>
+{% block header %}
+<header class="container-fluid d-inline-flex justify-content-between">
+    <div class="LOGO align-self-center offset-1 col-2">
+        <a href="{{ url_for('TTTS') }}">台北科技茗茶<br>TaipeiTech Tea Shop</a>
+    </div>
+    <div class="container-fluid d-inline-flex justify-content-end col-8">
+        <a class="nav-item" href="">最新消息</a>
+        <a class="nav-item" href="">茗茶介紹</a>
+        <a class="nav-item" href="{{ url_for('goods.index') }}">購買茗茶</a>
+        <a class="nav-item" href="">聯絡我們</a>
+        {% if g.user %}
+        <span class="align-self-center text-white user-font-size px-3 border-left">{{ g.user['username'] }}</span>
+            {% if g.user['PermissionID'] == 1%}
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.userList') }}">帳戶名單</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品分析</a>
+            <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% elif g.user['PermissionID'] == 2%}
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品分析</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.orderList') }}">商品訂單</a>
+            <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% elif g.user['PermissionID'] == 3%}
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.shoppingcart') }}">購物車</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.buyHistory') }}">購買紀錄</a>
+            <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% endif %}
+        {% else %}
+        <a class="nav-item" href="{{ url_for('user.login') }}"><img src="{{ url_for('static', filename='image/user.png') }}" alt="user"></a>
+        {% endif %}
+    </div>
+    <div class="col-1"></div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid row my-2 col-10 offset-1 mb-5 mt-4">
+    <div class="container-fluid my-2">
+        <div class="container-fluid m-0 p-0 font-color-white row align-items-center justify-content-between">
+            <p class="font-weight-bold mb-0 font-size-16 align-self-end">結帳 - Checkout</p>
+        </div>
+        <hr>
+    </div>
+        
+    <div class="container-fluid col-10 offset-1 my-4">
+        <form method="post">
+            <table class="table table-striped border border-secondary">
+                <thead>
+                    <tr class="text-center">
+                        <th scope="col">#</th>
+                        <th scope="col">商品名稱</th>
+                        <th scope="col">商品單價</th>
+                        <th scope="col">商品庫存</th>
+                        <th scope="col">購買數量</th>
+                        <th scope="col">小計</th>
+                    </tr>
+                </thead>
+                {% for goods in shoppingCart %}
+                <tbody>
+                    <tr class="text-center">
+                        <th scope="row" class="align-middle">-</th>
+                        <td class="align-middle">{{ goods['goodsName'] }}</td>
+                        <td class="align-middle">NT${{ goods['Price'] }}</td>
+                        <td class="align-middle">{{ goods['StockQuantity'] }}</td>
+                        <td class="align-middle">{{ goods['Amount'] }}</td>
+                        <td class="align-middle">{{ goods['totalPrice'] }}</td>
+                    </tr>
+                </tbody>
+                {% endfor %}
+            </table>
+            <hr>
+            <div class="form-group row">
+                <label for="address" class="col-sm-2 col-form-label offset-1 text-center">地址：</label>
+                <div class="col-sm-8">
+                <input type="text" class="form-control" name="addresss" id="addresss" placeholder="addresss" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="shippingMethod" class="col-sm-2 col-form-label offset-1 text-center">運送方式：</label>
+                <div class="col-sm-8">
+                    <select class="form-control" name="shippingMethod" id="shippingMethod" required>
+                        <option value="1">超商取貨</option>
+                        <option value="2">宅配到府</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="payment" class="col-sm-2 col-form-label offset-1 text-center">付款方式：</label>
+                <div class="col-sm-8">
+                    <select class="form-control" name="payment" id="payment" required>
+                        <option value="1">現金</option>
+                        <option value="2">信用卡</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="discount" class="col-sm-2 col-form-label offset-1 text-center">折扣券：</label>
+                <div class="col-sm-8">
+                <input type="text" class="form-control" name="discount" id="discount" placeholder="discount" value="{{ request.form['discount'] }}">
+                </div>
+            </div>
+            <div class="form-group row align-items-center">
+                <label for="discount" class="col-sm-2 col-form-label offset-1 text-center">總金額：</label>
+                <span class="col-sm-8 mb-0">{{ total }}</span>
+            </div>
+            <hr>
+            <div class="row col-sm-12 justify-content-end ">
+                <input type="submit" value="確定購買" class="btn btn-primary">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="d-flex py-4">
+    <div class="container-fluid footer-text-container offset-1">
+        <p class="footer-text">
+            台北科技茗茶 02-6874193 <br>
+            台北市大安區忠孝東路三段1號<br>
+            Copyright © 2001-2018 TaipeiTech
+        </p>
+    </div>
+    <div class="container-fluid d-flex flex-column justify-content-around">
+        <div class="footer-a-container d-flex justify-content-end">
+            <a href="">首頁</a>
+            <a href="">最新消息</a>
+            <a href="">茗茶介紹</a>
+            <a href="{{ url_for('goods.index') }}">購買茗茶</a>
+            <a href="">聯絡我們</a>
+        </div>
+        <div class="d-flex justify-content-end software-logo">
+            <a href="https://www.facebook.com/" target="_blank"><img src="{{ url_for('static', filename='image/facebook.png') }}" alt="facebook"></a>
+            <a href="https://www.instagram.com/?hl=zh-tw" target="_blank"><img src="{{ url_for('static', filename='image/instagram.png') }}" alt="instagram"></a>
+            <a href="https://twitter.com/?lang=zh-tw" target="_blank"><img src="{{ url_for('static', filename='image/twitter.png') }}" alt="twitter"></a>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+{% block scripts %}{% endblock %}

@@ -1,27 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %} - 編輯用戶{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/header.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/footer.css') }}">
+{% endblock %}
+
+{% block header %}
+<header class="container-fluid d-inline-flex justify-content-between">
+    <div class="LOGO align-self-center offset-1 col-2">
+        <a href="{{ url_for('TTTS') }}">台北科技茗茶<br>TaipeiTech Tea Shop</a>
+    </div>
+    <div class="container-fluid d-inline-flex justify-content-end col-8">
+        <a class="nav-item" href="">最新消息</a>
+        <a class="nav-item" href="">茗茶介紹</a>
+        <a class="nav-item" href="{{ url_for('goods.index') }}">購買茗茶</a>
+        <a class="nav-item" href="">聯絡我們</a>
+        {% if g.user %}
+        <span class="align-self-center text-white user-font-size px-3 border-left">{{ g.user['username'] }}</span>
+            {% if g.user['PermissionID'] == 1%}
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.userList') }}">帳戶名單</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品分析</a>
+            <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% elif g.user['PermissionID'] == 2%}
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品分析</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.orderList') }}">商品訂單</a>
+            <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% elif g.user['PermissionID'] == 3%}
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.shoppingcart') }}">購物車</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.buyHistory') }}">購買紀錄</a>
+            <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% endif %}
+        {% else %}
+        <a class="nav-item" href="{{ url_for('user.login') }}"><img src="{{ url_for('static', filename='image/user.png') }}" alt="user"></a>
+        {% endif %}
+    </div>
+    <div class="col-1"></div>
+</header>
+{% endblock %}
+
+
 {% for message in get_flashed_messages() %}
   <div class="flash">{{ message }}</div>
 {% endfor %}
 {% block content %}
-  <form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" value="{{ request.form['UserName'] or user['UserName'] }}" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <label for="confirmPassword">Confirm Password</label>
-    <input type="password" name="confirmPassword" id="confirmPassword" required>
-    <label for="permission">Permission</label>
-    <input type="permission" name="permission" id="permission" value="{{ request.form['PermissionID'] or user['PermissionID'] }}" required>
-    <label for="identification">Identification Number</label>
-    <input type="identification" name="identification" id="identification" value="{{ request.form['IdentificationNumber'] or user['IdentificationNumber'] }}" required>
-    <label for="gender">Gender</label>
-    <input type="gender" name="gender" id="gender" value="{{ request.form['Gender'] or user['Gender'] }}" required>
-    <label for="cellphone">Cellphone</label>
-    <input type="cellphone" name="cellphone" id="cellphone" value="{{ request.form['CellphoneNumber'] or user['CellphoneNumber'] }}" required>
-    <label for="email">E-mail</label>
-    <input type="email" name="email" id="email" value="{{ request.form['Email'] or user['Email'] }}" required>
-    <input type="submit" value="Edit">    
-  </form>
-  <form method="post" action="{{ url_for('user.deleteAccount', user_id=user['AccountID']) }}">
-    <input type="submit" value="Delete">    
-  </form>
+<form method="POST">
+        <div class="card border border-secondary col-5 mx-auto my-5">
+            <div class="card-header bg-white font-weight-bold">
+                編輯用戶 - {{ user['UserName'] }}
+            </div>
+            <div class="card-body">
+                <div class="form-container">
+                    <form>
+                        <div class="form-group row">
+                            <label for="username" class="col-sm-2 col-form-label">用戶名稱</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="username" id="username" class="form-control" placeholder="username" value="{{ request.form['UserName'] or user['UserName'] }}" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="password" class="col-sm-2 col-form-label">密碼</label>
+                            <div class="col-sm-10">
+                                <input type="password" name="password" id="password" class="form-control" placeholder="password" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="confirmPassword" class="col-sm-2 col-form-label">確認密碼</label>
+                            <div class="col-sm-10">
+                                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" placeholder="confirmPassword" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="permission" class="col-sm-2 col-form-label">用戶權限</label>
+                            <div class="col-sm-10">
+                                <input type="permission" name="permission" id="permission" class="form-control" placeholder="permission" value="{{ request.form['PermissionID'] or user['PermissionID'] }}" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="identification" class="col-sm-2 col-form-label">身分證</label>
+                            <div class="col-sm-10">
+                                <input type="identification" name="identification" id="identification" class="form-control" placeholder="identification" value="{{ request.form['IdentificationNumber'] or user['IdentificationNumber'] }}" required>
+                            </div>
+                        </div>
+                        <fieldset class="form-group">
+                            <div class="row">
+                                <legend class="col-form-label col-sm-2 pt-0">性別</legend>
+                                <div class="col-sm-10 d-inline-flex">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="gender" id="genderMale" value="M" checked>
+                                        <label class="form-check-label" for="genderMale">男</label>
+                                    </div>
+                                    <div class="form-check pl-5">
+                                        <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="F">
+                                        <label class="form-check-label" for="genderFemale">女</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="form-group row">
+                            <label for="cellphone" class="col-sm-2 col-form-label">手機</label>
+                            <div class="col-sm-10">
+                                <input type="cellphone" name="cellphone" id="cellphone" class="form-control" placeholder="cellphone" value="{{ request.form['CellphoneNumber'] or user['CellphoneNumber'] }}" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="email" class="col-sm-2 col-form-label">E-mail</label>
+                            <div class="col-sm-10">
+                                <input type="email" name="email" id="email" class="form-control" placeholder="email" value="{{ request.form['Email'] or user['Email'] }}" required>
+                            </div>
+                        </div>
+                        <input class="btn btn-primary offset-2 col-4 mr-3" type="submit" value="保存變更">
+                        <form method="post" action="{{ url_for('user.deleteAccount', user_id=user['AccountID']) }}">
+                            <input class="btn btn-warning col-4" type="submit" value="刪除用戶">    
+                        </form>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </form>
+    
+
+  
 {% endblock %}
+
+{% block footer %}
+<footer class="d-flex py-4">
+    <div class="container-fluid footer-text-container offset-1">
+        <p class="footer-text">
+            台北科技茗茶 02-6874193 <br>
+            台北市大安區忠孝東路三段1號<br>
+            Copyright © 2001-2018 TaipeiTech
+        </p>
+    </div>
+    <div class="container-fluid d-flex flex-column justify-content-around">
+        <div class="footer-a-container d-flex justify-content-end">
+            <a href="">首頁</a>
+            <a href="">最新消息</a>
+            <a href="">茗茶介紹</a>
+            <a href="{{ url_for('goods.index') }}">購買茗茶</a>
+            <a href="">聯絡我們</a>
+        </div>
+        <div class="d-flex justify-content-end software-logo">
+            <a href="https://www.facebook.com/" target="_blank"><img src="{{ url_for('static', filename='image/facebook.png') }}" alt="facebook"></a>
+            <a href="https://www.instagram.com/?hl=zh-tw" target="_blank"><img src="{{ url_for('static', filename='image/instagram.png') }}" alt="instagram"></a>
+            <a href="https://twitter.com/?lang=zh-tw" target="_blank"><img src="{{ url_for('static', filename='image/twitter.png') }}" alt="twitter"></a>
+        </div>
+    </div>
+    <div class="offset-1"></div>
+</footer>
+{% endblock %}
+{% block scripts %}{% endblock %}

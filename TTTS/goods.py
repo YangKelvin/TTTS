@@ -156,7 +156,7 @@ def buyGoods(GoodsID):
             else:
                 discount = goodsDiscount['DiscountPercentage']
                 discountID = goodsDiscount['DiscountID']
-            # print(goodsDiscount)
+            print('discountID:' + str(discountID))
 
             # 新增訂單資料（ORDERS）
             totalPrice=int(orderAmount) * int(buyGoods['Price'] * discount) 

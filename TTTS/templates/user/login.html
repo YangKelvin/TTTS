@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}會員登入{% endblock %}
+{% block title %} - 會員登入{% endblock %}
 {% block stylesheet %}<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/logIn.css') }}">{% endblock %}
 
 {% block header %}
 <div class="container-fluid d-inline-flex justify-content-between navbar-fixed-top">
     <div class="LOGO align-self-center">
-        <a href="{{ url_for('goods.index') }}">台北科技茗茶<br>TaipeiTech Tea Shop</a>
+        <a href="{{ url_for('TTTS') }}">台北科技茗茶<br>TaipeiTech Tea Shop</a>
     </div>
     <div class="container-fluid hnav d-inline-flex justify-content-end">
         {% if g.user %}
