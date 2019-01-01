@@ -1,11 +1,136 @@
+<!-- 待修改 -->
 {% extends 'base.html' %}
 
+{% block title %} - 編輯用戶{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/header.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/footer.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/purchase.css') }}">
+{% endblock %}
+
 {% block header %}
-  <h1>{% block title %}Register{% endblock %}</h1>
+<header class="container-fluid d-inline-flex justify-content-between">
+    <div class="LOGO align-self-center offset-1 col-2">
+        <a href="{{ url_for('TTTS') }}">台北科技茗茶<br>TaipeiTech Tea Shop</a>
+    </div>
+    <div class="container-fluid d-inline-flex justify-content-end col-8">
+        <a class="nav-item" href="">最新消息</a>
+        <a class="nav-item" href="">茗茶介紹</a>
+        <a class="nav-item" href="{{ url_for('goods.index') }}">購買茗茶</a>
+        <a class="nav-item" href="">聯絡我們</a>
+        {% if g.user %}
+        <span class="align-self-center text-white user-font-size px-3 border-left">{{ g.user['username'] }}</span>
+            {% if g.user['PermissionID'] == 1%}
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.userList') }}">帳戶名單</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品管理/分析</a>
+            <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% elif g.user['PermissionID'] == 2%}
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品管理/分析</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.orderList') }}">商品訂單</a>
+            <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% elif g.user['PermissionID'] == 3%}
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.shoppingcart') }}">購物車</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.buyHistory') }}">購買紀錄</a>
+            <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% endif %}
+        {% else %}
+        <a class="nav-item" href="{{ url_for('user.login') }}"><img src="{{ url_for('static', filename='image/user.png') }}" alt="user"></a>
+        {% endif %}
+    </div>
+    <div class="col-1"></div>
+</header>
 {% endblock %}
 
 {% block content %}
-  <form method="post">
+<div class="container-fluid col-10 offset-1 my-5">
+    <div class="container-fluid m-0 p-0 font-color-white row align-items-center">
+        <p class="font-weight-bold mb-0 align-self-end font-size-16 col-4 p-0">新建帳戶 - Create Account</p>
+        <span class="text-center text-danger font-weight-bold border border-danger px-4 py-2 col-4">此處為帳戶管理介面，所有的操作請謹慎處理！</span>
+        <div class="col-4 justify-content-end row pr-0">
+            <a class="btn btn-secondary align-self-center" href="{{ url_for('user.userList') }}">返回用戶名單</a>
+        </div>
+    </div>
+    <hr>
+</div>
+<form method="post">
+    <div class="card border border-secondary col-5 mx-auto mt-5">
+        <div class="card-header bg-white font-weight-bold">
+            用戶資料
+        </div>
+        <div class="card-body">
+            <div class="form-container">
+                <div class="form-group row">
+                    <label for="username" class="col-sm-2 col-form-label">姓名</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="username" id="username" class="form-control" placeholder="username" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="account" class="col-sm-2 col-form-label">帳號</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="account" id="account" class="form-control" placeholder="account" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="password" class="col-sm-2 col-form-label">密碼</label>
+                    <div class="col-sm-10">
+                        <input type="password" name="password" id="password" class="form-control" placeholder="password" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="permission" class="col-sm-2 col-form-label">用戶權限</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" type="permission" name="permission" id="permission" required>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="identification" class="col-sm-2 col-form-label">身分證</label>
+                    <div class="col-sm-10">
+                        <input type="identification" name="identification" id="identification" class="form-control" placeholder="identification" required>
+                    </div>
+                </div>
+                <fieldset class="form-group">
+                    <div class="row">
+                        <legend class="col-form-label col-sm-2 pt-0">性別</legend>
+                        <div class="col-sm-10 d-inline-flex">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gender" id="genderMale" value="M" checked>
+                                <label class="form-check-label" for="genderMale">男</label>
+                            </div>
+                            <div class="form-check pl-5">
+                                <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="F">
+                                <label class="form-check-label" for="genderFemale">女</label>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="form-group row">
+                    <label for="cellphone" class="col-sm-2 col-form-label">手機</label>
+                    <div class="col-sm-10">
+                        <input type="cellphone" name="cellphone" id="cellphone" class="form-control" placeholder="cellphone" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="email" class="col-sm-2 col-form-label">E-mail</label>
+                    <div class="col-sm-10">
+                        <input type="email" name="email" id="email" class="form-control" placeholder="email" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mx-auto text-center mt-3 mb-5">
+        <input class="btn btn-primary col-4 mb-2" type="submit" value="新建帳戶">
+    </div>
+</form>
+
+<!-- 原本的code -->
+  <!-- <form method="這裡加post">
     <label for="username">Username</label>
     <input name="username" id="username" required>
     <label for="account">Account</label>
@@ -23,5 +148,33 @@
     <label for="email">E-mail</label>
     <input type="email" name="email" id="email" required>
     <input type="submit" value="Register">    
-  </form>
+  </form> -->
 {% endblock %}
+
+{% block footer %}
+<footer class="d-flex py-4">
+    <div class="container-fluid footer-text-container offset-1">
+        <p class="footer-text">
+            台北科技茗茶 02-6874193 <br>
+            台北市大安區忠孝東路三段1號<br>
+            Copyright © 2001-2018 TaipeiTech
+        </p>
+    </div>
+    <div class="container-fluid d-flex flex-column justify-content-around">
+        <div class="footer-a-container d-flex justify-content-end">
+            <a href="{{ url_for('TTTS') }}">首頁</a>
+            <a href="">最新消息</a>
+            <a href="">茗茶介紹</a>
+            <a href="{{ url_for('goods.index') }}">購買茗茶</a>
+            <a href="">聯絡我們</a>
+        </div>
+        <div class="d-flex justify-content-end software-logo">
+            <a href="https://www.facebook.com/" target="_blank"><img src="{{ url_for('static', filename='image/facebook.png') }}" alt="facebook"></a>
+            <a href="https://www.instagram.com/?hl=zh-tw" target="_blank"><img src="{{ url_for('static', filename='image/instagram.png') }}" alt="instagram"></a>
+            <a href="https://twitter.com/?lang=zh-tw" target="_blank"><img src="{{ url_for('static', filename='image/twitter.png') }}" alt="twitter"></a>
+        </div>
+    </div>
+    <div class="offset-1"></div>
+</footer>
+{% endblock %}
+{% block scripts %}{% endblock %}

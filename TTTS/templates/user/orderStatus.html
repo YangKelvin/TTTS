@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
-{% block title %}訂單狀態{% endblock %}
+{% block title %} - 訂單管理{% endblock %}
+
 {% block stylesheet %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/header.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/footer.css') }}">
@@ -21,10 +22,10 @@
         <span class="align-self-center text-white user-font-size px-3 border-left">{{ g.user['username'] }}</span>
             {% if g.user['PermissionID'] == 1%}
             <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.userList') }}">帳戶名單</a>
-            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品分析</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品管理/分析</a>
             <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
             {% elif g.user['PermissionID'] == 2%}
-            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品分析</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品管理/分析</a>
             <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.orderList') }}">商品訂單</a>
             <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
             {% elif g.user['PermissionID'] == 3%}
@@ -40,19 +41,11 @@
 </header>
 {% endblock %}
 
-{% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
-{% endfor %}
-
 {% block content %}
 <div class="container-fluid row my-2 col-10 offset-1 mb-5 mt-4">
     <div class="container-fluid my-2">
         <div class="container-fluid m-0 p-0 font-color-white row align-items-center justify-content-between">
             <p class="font-weight-bold mb-0 font-size-16 align-self-end">所有訂單 - All Orders</p>
-            <form method="post" class="form-inline my-2 my-lg-0" action="{{ url_for('search.search')}}">
-                <input class="form-control mr-sm-2" type="search" placeholder="搜尋商品" aria-label="Search" name="searchName" id="searchName" required>
-                <button class="btn search-btn my-2 my-sm-0" type="submit">搜尋</button>
-            </form>
         </div>
         <hr>
         {% for order in orders %}
@@ -61,29 +54,32 @@
                     <img class="product-img" src="{{ url_for('static', filename='image/product1.jpg') }}" alt="Card image cap">
                 </div>
                 <form method="post" action="{{ url_for('user.updateOrderStatus', orderID=order['OrderID']) }}" class="card-body col-9 mx-auto d-flex flex-column justify-content-between">                    
-                    <label name="OrderID" id="OrderID" class="card-title offset-1">訂單編號: {{ order['OrderID'] }}</label>
+                    <label name="OrderID" id="OrderID" class="card-title offset-1">訂單編號： {{ order['OrderID'] }}</label>
                     <span class="about offset-1 pb-2">買家帳號： {{ order['Account'] }}</span>
                     <span class="about offset-1 pb-2">買家用戶名稱： {{ order['UserName'] }}</span>
                     <span class="about offset-1 pb-2">送達地址： {{ order['Address'] }}</span>
                     <span class="about offset-1 pb-2">取貨地點： {{ order['ShippingMethodName'] }}</span>
                     <span class="about offset-1 pb-2">當前貨物狀態： {{ order['StatusName'] }}</span>
-                    <span class="about offset-1 pb-2">修改當前貨物狀態: </span>
-                    <select name="orderStatus" id="orderStatus" class="card-body col-9 mx-auto d-flex flex-column justify-content-between">
-                        <option value = "1" >Process</option>
-                        <option value = "2" >Transportation</option>
-                        <option value = "3" >Arrival</option>
-                        <option value = "4" >Carry out</option>
-                        <option value = "5" >Fail</option>
-                        <option value = "6" >Apply</option>
-                        <option value = "7" >Cancel</option>
-                    </select>
+                    <div class="about offset-1 pb-2">
+                        <span class="about">修改當前貨物狀態：
+                            <select name="orderStatus" id="orderStatus" class="card-body col-4 mx-auto p-0">
+                                <option value = "1" >Process</option>
+                                <option value = "2" >Transportation</option>
+                                <option value = "3" >Arrival</option>
+                                <option value = "4" >Carry out</option>
+                                <option value = "5" >Fail</option>
+                                <option value = "6" >Apply</option>
+                                <option value = "7" >Cancel</option>
+                            </select>
+                        </span>
+                    </div>
                     <span class="about offset-1 pb-2">付款方式： {{ order['PaymentName'] }}</span>
-                    <span class="about offset-1 pb-2">折扣方式 {{ order['DiscountName'] }}</span>
+                    <span class="about offset-1 pb-2">折扣方式： {{ order['DiscountName'] }}</span>
                     <span class="about offset-1 pb-2">折扣： {{ order['DiscountPercentage'] }}</span>
                     <span class="about offset-1 row">
                             總金額： {{ order['TotalPrice'] }}
                     </span>
-                    <button class="btn search-btn my-2 my-sm-0" type="submit">確定</button>
+                    <span class="row justify-content-end"><button class="btn btn-primary col-3" type="submit">確定變更</button></span>
                 </form>
             </div>
             <hr>
@@ -103,7 +99,7 @@
     </div>
     <div class="container-fluid d-flex flex-column justify-content-around">
         <div class="footer-a-container d-flex justify-content-end">
-            <a href="">首頁</a>
+            <a href="{{ url_for('TTTS') }}">首頁</a>
             <a href="">最新消息</a>
             <a href="">茗茶介紹</a>
             <a href="{{ url_for('goods.index') }}">購買茗茶</a>

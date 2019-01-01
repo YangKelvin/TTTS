@@ -108,7 +108,7 @@
             </div>
             <div class="form-group row align-items-center">
                 <label for="discount" class="col-sm-2 col-form-label offset-1 text-center">總金額：</label>
-                <span class="col-sm-8 mb-0">{{ total }}</span>
+                <span class="col-sm-8 mb-0">NT${{ total }}</span>
             </div>
             <hr>
             <div class="row col-sm-12 justify-content-end ">
@@ -130,7 +130,7 @@
     </div>
     <div class="container-fluid d-flex flex-column justify-content-around">
         <div class="footer-a-container d-flex justify-content-end">
-            <a href="">首頁</a>
+            <a href="{{ url_for('TTTS') }}">首頁</a>
             <a href="">最新消息</a>
             <a href="">茗茶介紹</a>
             <a href="{{ url_for('goods.index') }}">購買茗茶</a>

@@ -1,23 +1,138 @@
-<!doctype html>
-<title>北科茗茶 - 新增商品</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='stylee.css') }}">
+{% extends 'base.html' %}
 
-<h1>新增商品</h1>
+{% block title %} - 新增商品{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/header.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/footer.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/purchase.css') }}">
+{% endblock %}
 
+{% block header %}
+<header class="container-fluid d-inline-flex justify-content-between">
+    <div class="LOGO align-self-center offset-1 col-2">
+        <a href="{{ url_for('TTTS') }}">台北科技茗茶<br>TaipeiTech Tea Shop</a>
+    </div>
+    <div class="container-fluid d-inline-flex justify-content-end col-8">
+        <a class="nav-item" href="">最新消息</a>
+        <a class="nav-item" href="">茗茶介紹</a>
+        <a class="nav-item" href="{{ url_for('goods.index') }}">購買茗茶</a>
+        <a class="nav-item" href="">聯絡我們</a>
+        {% if g.user %}
+        <span class="align-self-center text-white user-font-size px-3 border-left">{{ g.user['username'] }}</span>
+            {% if g.user['PermissionID'] == 1%}
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.userList') }}">帳戶名單</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品管理/分析</a>
+            <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% elif g.user['PermissionID'] == 2%}
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品管理/分析</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.orderList') }}">商品訂單</a>
+            <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% elif g.user['PermissionID'] == 3%}
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.shoppingcart') }}">購物車</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.buyHistory') }}">購買紀錄</a>
+            <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
+            {% endif %}
+        {% else %}
+        <a class="nav-item" href="{{ url_for('user.login') }}"><img src="{{ url_for('static', filename='image/user.png') }}" alt="user"></a>
+        {% endif %}
+    </div>
+    <div class="col-1"></div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid col-10 offset-1 my-5">
+    <div class="container-fluid m-0 font-color-white row align-items-center justify-content-between">
+        <p class="font-weight-bold mb-0 align-self-end font-size-16 col-4 p-0">新增商品 - Add Goods</p>
+        <div class="col-4 justify-content-end row">
+            <a class="btn btn-secondary align-self-center" href="{{ url_for('user.statistics') }}">返回商品管理</a>
+        </div>
+    </div>
+    <hr>
+</div>
 <form method="post">
-    <label for="goodsName">茶種</label>
-    <input name="goodsName" id="goodsName" required>
-    <label for="goodsType">茶種</label>
-    <input name="goodsType" id="goodsType" required>
-    <label for="price">價格</label>
-    <input name="price" id="price" required>
-    <label for="stockQuantity">數量</label>
-    <input name="stockQuantity" id="stockQuantity" required>
-    <label for="introduction">介紹</label>
-    <input name="introduction" id="introduction" required>
-    <label for="imageName">圖片</label>
-    <input type="file" name="imageName" id="imageName" accept="image/*" required>
-    <label for="countryOfOrigin">產地</label>
-    <input name="countryOfOrigin" id="countryOfOrigin" required>
-    <input type="submit" value="Add">
+    <div class="card border border-secondary col-5 mx-auto mt-5">
+        <div class="card-header bg-white font-weight-bold">
+            新商品資訊
+        </div>
+        <div class="card-body">
+            <div class="form-container">
+                <div class="form-group row">
+                    <label for="goodsName" class="col-sm-2 col-form-label">商品名稱</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="goodsName" id="goodsName" class="form-control" placeholder="Name" value="" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="goodsType" class="col-sm-2 col-form-label">茶種</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="goodsType" id="goodsType" class="form-control" placeholder="Type" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="price" class="col-sm-2 col-form-label">價格</label>
+                    <div class="col-sm-10">
+                        <input type="" name="price" id="price" class="form-control" placeholder="Price" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="stockQuantity" class="col-sm-2 col-form-label">數量</label>
+                    <div class="col-sm-10">
+                        <input type="" name="stockQuantity" id="stockQuantity" class="form-control" placeholder="Quantity" value="" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="introduction" class="col-sm-2 col-form-label">介紹</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="introduction" id="introduction" class="form-control" placeholder="Introduction" value="" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="imageName" class="col-sm-2 col-form-label">圖片</label>
+                    <div class="col-sm-10">
+                        <input type="file" name="imageName" id="imageName" class="form-control" accept="image/*" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="countryOfOrigin" class="col-sm-2 col-form-label">產地</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="countryOfOrigin" id="countryOfOrigin" class="form-control" placeholder="Origin" value="" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mx-auto text-center mt-3 mb-5">
+        <input class="btn btn-primary col-4 mb-2" type="submit" value="上架商品">
+    </div>
 </form>
+{% endblock %}
+
+{% block footer %}
+
+<footer class="d-flex py-4">
+    <div class="container-fluid footer-text-container offset-1">
+        <p class="footer-text">
+            台北科技茗茶 02-6874193 <br>
+            台北市大安區忠孝東路三段1號<br>
+            Copyright © 2001-2018 TaipeiTech
+        </p>
+    </div>
+    <div class="container-fluid d-flex flex-column justify-content-around">
+        <div class="footer-a-container d-flex justify-content-end">
+            <a href="{{ url_for('TTTS') }}">首頁</a>
+            <a href="">最新消息</a>
+            <a href="">茗茶介紹</a>
+            <a href="{{ url_for('goods.index') }}">購買茗茶</a>
+            <a href="">聯絡我們</a>
+        </div>
+        <div class="d-flex justify-content-end software-logo">
+            <a href="https://www.facebook.com/" target="_blank"><img src="{{ url_for('static', filename='image/facebook.png') }}" alt="facebook"></a>
+            <a href="https://www.instagram.com/?hl=zh-tw" target="_blank"><img src="{{ url_for('static', filename='image/instagram.png') }}" alt="instagram"></a>
+            <a href="https://twitter.com/?lang=zh-tw" target="_blank"><img src="{{ url_for('static', filename='image/twitter.png') }}" alt="twitter"></a>
+        </div>
+    </div>
+    <div class="offset-1"></div>
+</footer>
+{% endblock %}
+{% block scripts %}{% endblock %}

@@ -21,10 +21,10 @@
         <span class="align-self-center text-white user-font-size px-3 border-left">{{ g.user['username'] }}</span>
             {% if g.user['PermissionID'] == 1%}
             <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.userList') }}">帳戶名單</a>
-            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品分析</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品管理/分析</a>
             <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
             {% elif g.user['PermissionID'] == 2%}
-            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品分析</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品管理/分析</a>
             <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
             {% elif g.user['PermissionID'] == 3%}
             <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.shoppingcart') }}">購物車</a>
@@ -104,7 +104,7 @@
     </div>
     <div class="container-fluid d-flex flex-column justify-content-around">
         <div class="footer-a-container d-flex justify-content-end">
-            <a href="">首頁</a>
+            <a href="{{ url_for('TTTS') }}">首頁</a>
             <a href="">最新消息</a>
             <a href="">茗茶介紹</a>
             <a href="{{ url_for('goods.index') }}">購買茗茶</a>
