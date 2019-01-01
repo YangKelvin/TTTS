@@ -21,6 +21,7 @@
             {% if g.user['PermissionID'] == 1%}
             <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.userList') }}">帳戶名單</a>
             <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品管理/分析</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.orderList') }}">商品訂單</a>
             <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
             {% elif g.user['PermissionID'] == 2%}
             <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品管理/分析</a>

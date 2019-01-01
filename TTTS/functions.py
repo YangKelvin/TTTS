@@ -86,11 +86,19 @@ def update_goods_stock_quantity(goods_id, new_amount):
 
 def add_new_goods_in_shopping_cart(account_id, goods_id, amount):
     db = get_db()
-    db.execute(
-        'INSERT INTO SHOPPINGCART (AccountID, GoodsID, Amount) '
-        'VALUES (?, ?, ?)', 
-        (account_id, goods_id, amount,)
-    )
+    tmp = db.execute(
+        'SELECT Amount FROM SHOPPINGCART WHERE AccountID = ? AND GoodsID = ?', (account_id, goods_id,)
+    ).fetchone()
+    if tmp is None:
+        db.execute(
+            'INSERT INTO SHOPPINGCART (AccountID, GoodsID, Amount) '
+            'VALUES (?, ?, ?)', 
+            (account_id, goods_id, amount,)
+        )
+    else:
+        db.execute(
+            'UPDATE SHOPPINGCART SET Amount = ? WHERE AccountID = ? AND GoodsID = ?', (int(amount) + int(tmp['Amount']), account_id, goods_id,)
+        )
     db.commit()
 
 def delete_goods_from_shopping_cart(account_id, goods_id):
@@ -133,20 +141,6 @@ def get_discount(discount_str):
     ).fetchone()
     
     return discount
-
-def get_orders(account_id):
-    db = get_db()
-    orders = db.execute(
-        'SELECT A.OrderID, A.Date, A.Address, B.ShippingMethodName, C.StatusName, D.PaymentName, A.TotalPrice, E.DiscountName, E.DiscountPercentage '
-        'FROM ORDERS AS A, SHIPPINGMETHOD AS B, STATUS AS C, PAYMENT AS D, DISCOUNT AS E '
-        'WHERE A.ShippingMethodID = B.ShippingMethodID and '
-        'A.StatusID = C.StatusID and '
-        'A.PaymentID = D.PaymentID and '
-        'A.DiscountID = E.DiscountID and '
-        'A.AccountID = ?',
-        (account_id,)
-    ).fetchall()
-    return orders
 
 def get_user_buy_history(account_id):
     db = get_db()
@@ -232,6 +226,21 @@ def get_all_orders():
         'A.StatusID = D.StatusID and '
         'A.PaymentID = E.PaymentID and '
         'A.DiscountID = F.DiscountID',
+    ).fetchall()
+    return orders
+
+def get_orders(account_id):
+    db = get_db()
+    orders = db.execute(
+        'SELECT A.OrderID, A.Date, A.Address, B.ShippingMethodName, C.StatusName, D.PaymentName, A.TotalPrice, E.DiscountName, E.DiscountPercentage, F.Account, F.UserName '
+        'FROM ORDERS AS A, SHIPPINGMETHOD AS B, STATUS AS C, PAYMENT AS D, DISCOUNT AS E, ACCOUNT AS F '
+        'WHERE A.ShippingMethodID = B.ShippingMethodID and '
+        'A.StatusID = C.StatusID and '
+        'A.PaymentID = D.PaymentID and '
+        'A.DiscountID = E.DiscountID and '
+        'A.AccountID = F.AccountID and '
+        'A.AccountID = ?',
+        (account_id,)
     ).fetchall()
     return orders
 

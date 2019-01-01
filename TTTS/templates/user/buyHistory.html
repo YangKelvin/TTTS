@@ -23,6 +23,7 @@
             {% if g.user['PermissionID'] == 1%}
             <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.userList') }}">帳戶名單</a>
             <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品管理/分析</a>
+            <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.orderList') }}">商品訂單</a>
             <a class="btn btn-secondary align-self-center header-btn mx-1" href="{{ url_for('user.logout') }}">登出</a>
             {% elif g.user['PermissionID'] == 2%}
             <a class="btn btn-info align-self-center header-btn mx-1" href="{{ url_for('user.statistics') }}">商品管理/分析</a>
@@ -51,7 +52,21 @@
         {% for order in orders %}
             <div class="container-fluid row col-12 mx-0">
                 <div class="col-3 align-self-center">
-                    <img class="product-img" src="{{ url_for('static', filename='image/product1.jpg') }}" alt="Card image cap">
+                        {% if order['StatusName'] == 'Process'%}
+                        <img class="product-img" src="{{ url_for('static', filename='image/process.png') }}" alt="Card image cap">
+                        {% elif order['StatusName'] == 'Transportation'%}
+                        <img class="product-img" src="{{ url_for('static', filename='image/transportation.png') }}" alt="Card image cap">
+                        {% elif order['StatusName'] == 'Arrival'%}
+                        <img class="product-img" src="{{ url_for('static', filename='image/arrival.png') }}" alt="Card image cap">
+                        {% elif order['StatusName'] == 'Carry out'%}
+                        <img class="product-img" src="{{ url_for('static', filename='image/carryout.png') }}" alt="Card image cap">
+                        {% elif order['StatusName'] == 'Fail'%}
+                        <img class="product-img" src="{{ url_for('static', filename='image/fail.png') }}" alt="Card image cap">
+                        {% elif order['StatusName'] == 'Apply'%}
+                        <img class="product-img" src="{{ url_for('static', filename='image/apply.png') }}" alt="Card image cap">
+                        {% elif order['StatusName'] == 'Cancel'%}
+                        <img class="product-img" src="{{ url_for('static', filename='image/cancel.png') }}" alt="Card image cap">
+                        {% endif %}
                 </div>
                 <form method="post" action="{{ url_for('user.updateOrderStatus', orderID=order['OrderID']) }}" class="card-body col-9 mx-auto d-flex flex-column justify-content-between">                    
                     <label name="OrderID" id="OrderID" class="card-title offset-1">訂單編號： {{ order['OrderID'] }}</label>

@@ -339,6 +339,19 @@ def searchUser():
 
     return render_template('user/search.html')
 
+@bp.route('/searchOrder', methods=('GET', 'POST'))
+@login_required
+def searchOrder():
+    if request.method == 'POST':
+        db = get_db()
+        account = request.form['searchName']
+        id = db.execute('SELECT AccountID FROM ACCOUNT WHERE ACCOUNT.Account LIKE ?', ('%' + account + '%',)).fetchone()
+        order = functions.get_orders(id['AccountID'])
+
+        return render_template('user/orderStatus.html', orders=order)
+
+    return render_template('user/search.html')
+
 @bp.route('/statistics', methods=('GET', 'POST'))
 def statistics():
     allGoodsStatistics = functions.get_all_goods_statistics()
@@ -354,9 +367,6 @@ def goods_statistics(goods_id):
 @bp.route('/orderList', methods=('GET', 'POST'))
 def orderList():
     orders = functions.get_all_orders()
-    if request.method == 'POST':
-        newStatus = request.form['orderStatus']
-
     return render_template('user/orderStatus.html', orders = orders)
 
 @bp.route('<int:orderID>/updateOrderStatus', methods=('GET', 'POST'))
