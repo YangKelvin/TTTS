@@ -306,7 +306,8 @@ def create():
             )
             db.commit()
             # 待修改
-            return redirect(url_for('user.login'))
+            print('sucessful')
+            return redirect(url_for('user.userList'))
 
         flash(error)
     # 待修改
