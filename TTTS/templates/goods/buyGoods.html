@@ -65,7 +65,6 @@
                         <th scope="col">產地編號</th>
                     </tr>
                 </thead>
-                {% for goods in shoppingCart %}
                 <tbody>
                     <tr class="text-center">
                         <th scope="row" class="align-middle">-</th>
@@ -77,7 +76,7 @@
                         <td class="align-middle">{{ goods['CountryofOrigin'] }}</td>
                     </tr>
                 </tbody>
-                {% endfor %}
+                
             </table>
             <hr>
             <div class="form-group row">
